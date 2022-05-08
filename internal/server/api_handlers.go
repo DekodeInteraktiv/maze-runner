@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/PeterBooker/maze-game-server/internal/game"
 	"github.com/go-chi/chi"
 )
 
@@ -35,9 +36,7 @@ func (s *Server) register() http.HandlerFunc {
 			return
 		}
 
-		s.Game.Lock()
-
-		s.Game.Unlock()
+		s.Game.RegisterPlayer(name)
 
 		data := struct {
 			Message string
@@ -83,6 +82,29 @@ func (s *Server) playerMove() http.HandlerFunc {
 		}{
 			"Hello " + p.Name + ", you have successfully moved.",
 			"193473464793",
+		}
+
+		writeJSON(w, data, 200)
+	}
+}
+
+// getPlayer ...
+func (s *Server) getPlayer() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		token, _ := ctx.Value("Token").(string)
+
+		fmt.Println("Token: " + token)
+
+		p, err := s.Game.GetPlayerByToken(token)
+		if err != nil {
+
+		}
+
+		data := struct {
+			Player *game.Player
+		}{
+			p,
 		}
 
 		writeJSON(w, data, 200)

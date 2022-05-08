@@ -22,6 +22,8 @@ func (s *Server) apiRoutes() chi.Router {
 
 	r.Post("/register/{name}", s.register())
 
+	r.Get("/player/get", s.getPlayer())
+
 	r.Get("/get/maze", s.imageExample())
 
 	return r

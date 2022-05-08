@@ -22,7 +22,7 @@ type Game struct {
 func New() *Game {
 	m := maze.Generate(20, 20, seed)
 
-	fmt.Println(m.MarshalText())
+	//fmt.Println(m.MarshalText())
 
 	return &Game{
 		Name: "Maze Game",
@@ -60,6 +60,7 @@ func (g *Game) GetPlayerByToken(token string) (*Player, error) {
 	defer g.Unlock()
 
 	for _, p := range g.Players {
+		fmt.Println(p)
 		if p.Token == token {
 			return p, nil
 		}
