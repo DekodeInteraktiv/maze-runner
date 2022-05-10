@@ -1,12 +1,11 @@
 package server
 
 import (
-	"bytes"
 	"fmt"
-	"image/png"
-	"log"
 	"net/http"
 	"time"
+
+	"github.com/PeterBooker/maze-game-server/internal/assets"
 )
 
 // App ...
@@ -27,51 +26,21 @@ type Page struct {
 
 // webIndex ...
 func (s *Server) webIndex() http.HandlerFunc {
-
-	app := App{
-		Name:    s.Config.Name,
-		Version: s.Config.Version,
-		URL:     "https://maze-game-server.dev",
-	}
-
-	page := Page{
-		Name:        "index",
-		Title:       "Maze Game",
-		Description: "Maze Game for developers.",
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
 		w.Header().Set("Vary", "Accept-Encoding")
 
-		page.URLPath = r.URL.Path
-		page.Time = time.Now()
-
-		meta := struct {
-			Page Page
-			App  App
-		}{
-			page,
-			app,
-		}
-
-		fmt.Println(meta)
+		w.Write([]byte("Welcome to the Maze Game..."))
 	}
 }
 
 // webFavicon ...
 func (s *Server) webFavicon() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "image/png")
-		img := s.Game.GetImage()
+		w.Header().Set("Content-Type", "image/x-icon")
+		data, _ := assets.Content.ReadFile("static/favicon.ico")
 
-		buf := new(bytes.Buffer)
-		err := png.Encode(buf, img)
-		if err != nil {
-			log.Panicf("Failed to encode image: %v\n", err)
-		}
-
-		w.Write(buf.Bytes())
+		w.Write(data)
 	}
 }
 

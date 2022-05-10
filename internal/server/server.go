@@ -1,8 +1,10 @@
 package server
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/PeterBooker/maze-game-server/internal/assets"
@@ -20,7 +22,8 @@ type Server struct {
 	Config *config.Config
 	Router *chi.Mux
 	Client *http.Client
-	Game   *game.Game
+	Games  []*game.Game
+	sync.RWMutex
 }
 
 // New returns a pointer to the main server struct
@@ -29,10 +32,42 @@ func New(l *log.Logger, c *config.Config) *Server {
 		Config: c,
 		Logger: l,
 		Client: client.New(),
-		Game:   game.New(),
+		//Games:  make([]*game.Game, 50),
 	}
 
+	s.Games = make([]*game.Game, 50)
+
 	return s
+}
+
+func (s *Server) CreateGame() *game.Game {
+	g := game.New()
+
+	s.Lock()
+	defer s.Unlock()
+
+	s.Games = append(s.Games, g)
+
+	return g
+}
+
+func (s *Server) GetGameByID(id int) *game.Game {
+	fmt.Printf("%+v\n", s)
+	fmt.Printf("Games: %d\n", len(s.Games))
+	//s.Lock()
+	//defer s.Unlock()
+
+	fmt.Println("Looping Games...")
+
+	for _, g := range s.Games {
+		fmt.Println("Game...")
+		fmt.Printf("%+v\n", g)
+		if g.ID == id {
+			return g
+		}
+	}
+
+	return nil
 }
 
 // Setup starts the HTTP Server

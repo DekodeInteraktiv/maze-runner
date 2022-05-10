@@ -1,12 +1,11 @@
 package server
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"image/jpeg"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/PeterBooker/maze-game-server/internal/game"
 	"github.com/go-chi/chi"
@@ -17,8 +16,58 @@ type error struct {
 	Err string `json:"error"`
 }
 
+// gameCreate sets up a new game.
+func (s *Server) gameCreate() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		g := game.New()
+
+		data := struct {
+			Game *game.Game
+		}{
+			g,
+		}
+
+		writeJSON(w, data, 200)
+	}
+}
+
+// gameInfo gets info for a specific game.
+func (s *Server) gameInfo() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idStr := chi.URLParam(r, "id")
+
+		fmt.Println("ID: " + idStr)
+
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Invalid Game ID",
+			}
+
+			writeJSON(w, data, 404)
+		}
+
+		fmt.Println("Getting Game...")
+
+		g := s.GetGameByID(id)
+
+		//g.Lock()
+		//defer g.Unlock()
+
+		data := struct {
+			Game *game.Game
+		}{
+			g,
+		}
+
+		writeJSON(w, data, 200)
+	}
+}
+
 // register ...
-func (s *Server) register() http.HandlerFunc {
+/*func (s *Server) register() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		name := chi.URLParam(r, "name")
 
@@ -48,10 +97,10 @@ func (s *Server) register() http.HandlerFunc {
 
 		writeJSON(w, data, 200)
 	}
-}
+}*/
 
 // playerMove ...
-func (s *Server) playerMove() http.HandlerFunc {
+/*func (s *Server) playerMove() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		name := chi.URLParam(r, "direction")
 
@@ -86,10 +135,10 @@ func (s *Server) playerMove() http.HandlerFunc {
 
 		writeJSON(w, data, 200)
 	}
-}
+}*/
 
 // getPlayer ...
-func (s *Server) getPlayer() http.HandlerFunc {
+/*func (s *Server) getPlayer() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		token, _ := ctx.Value("Token").(string)
@@ -109,7 +158,7 @@ func (s *Server) getPlayer() http.HandlerFunc {
 
 		writeJSON(w, data, 200)
 	}
-}
+}*/
 
 // apiExample ...
 func (s *Server) apiExample() http.HandlerFunc {
@@ -138,7 +187,7 @@ func (s *Server) apiExample() http.HandlerFunc {
 }
 
 // apiExample ...
-func (s *Server) imageExample() http.HandlerFunc {
+/*func (s *Server) imageExample() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/jpeg")
 		img := s.Game.GetImage()
@@ -151,7 +200,7 @@ func (s *Server) imageExample() http.HandlerFunc {
 
 		w.Write(buf.Bytes())
 	}
-}
+}*/
 
 func writeJSON(w http.ResponseWriter, data interface{}, status int) {
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")

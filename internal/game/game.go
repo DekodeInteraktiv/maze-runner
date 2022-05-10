@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"image"
 	"sync"
 	"time"
@@ -9,23 +8,23 @@ import (
 	"gitlab.com/zaba505/maze"
 )
 
-var seed = time.Now().UnixNano()
+var id = incrementer{
+	id: 1,
+}
 
 type Game struct {
-	Name    string
-	Maze    *maze.Maze
-	Players []*Player
-	sync.RWMutex
+	ID            int        `json:"id"`
+	Maze          *maze.Maze `json:"-"`
+	Players       []*Player  `json:"players"`
+	*sync.RWMutex `json:"-"`
 }
 
 // New returns a new game instance.
 func New() *Game {
-	m := maze.Generate(20, 20, seed)
-
-	//fmt.Println(m.MarshalText())
+	m := maze.Generate(20, 20, time.Now().UnixNano())
 
 	return &Game{
-		Name: "Maze Game",
+		ID:   id.new(),
 		Maze: m,
 	}
 }
@@ -60,11 +59,24 @@ func (g *Game) GetPlayerByToken(token string) (*Player, error) {
 	defer g.Unlock()
 
 	for _, p := range g.Players {
-		fmt.Println(p)
 		if p.Token == token {
 			return p, nil
 		}
 	}
 
 	return nil, nil
+}
+
+type incrementer struct {
+	sync.Mutex
+	id int
+}
+
+func (a *incrementer) new() (id int) {
+	a.Lock()
+	defer a.Unlock()
+
+	id = a.id
+	a.id++
+	return
 }
