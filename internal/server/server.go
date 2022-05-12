@@ -32,10 +32,8 @@ func New(l *log.Logger, c *config.Config) *Server {
 		Config: c,
 		Logger: l,
 		Client: client.New(),
-		//Games:  make([]*game.Game, 50),
+		Games:  make([]*game.Game, 0, 50),
 	}
-
-	s.Games = make([]*game.Game, 50)
 
 	return s
 }
@@ -48,20 +46,16 @@ func (s *Server) CreateGame() *game.Game {
 
 	s.Games = append(s.Games, g)
 
+	fmt.Printf("Games: %d\n", len(s.Games))
+
 	return g
 }
 
 func (s *Server) GetGameByID(id int) *game.Game {
-	fmt.Printf("%+v\n", s)
-	fmt.Printf("Games: %d\n", len(s.Games))
-	//s.Lock()
-	//defer s.Unlock()
-
-	fmt.Println("Looping Games...")
+	s.Lock()
+	defer s.Unlock()
 
 	for _, g := range s.Games {
-		fmt.Println("Game...")
-		fmt.Printf("%+v\n", g)
 		if g.ID == id {
 			return g
 		}

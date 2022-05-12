@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -19,7 +18,7 @@ type error struct {
 // gameCreate sets up a new game.
 func (s *Server) gameCreate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		g := game.New()
+		g := s.CreateGame()
 
 		data := struct {
 			Game *game.Game
@@ -36,8 +35,6 @@ func (s *Server) gameInfo() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		idStr := chi.URLParam(r, "id")
 
-		fmt.Println("ID: " + idStr)
-
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			data := struct {
@@ -48,8 +45,6 @@ func (s *Server) gameInfo() http.HandlerFunc {
 
 			writeJSON(w, data, 404)
 		}
-
-		fmt.Println("Getting Game...")
 
 		g := s.GetGameByID(id)
 
