@@ -68,6 +68,7 @@ func New() *Game {
 	return &Game{
 		ID:       gameID.new(),
 		Password: generatePassword(),
+		Token:    strings.Replace(uuid.New().String(), "-", "", -1),
 		Maze:     m,
 		Maze2:    m2,
 		Active:   false,
