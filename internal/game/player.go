@@ -1,15 +1,14 @@
 package game
 
 import (
-	"image/color"
 	"sync"
 )
 
 type Player struct {
 	Name   string
-	ID     string
+	ID     int
 	Sprite []byte
-	Color  color.RGBA
+	Color  string
 	Pos    *Point
 	Token  string
 	sync.RWMutex

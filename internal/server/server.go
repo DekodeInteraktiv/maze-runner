@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -45,8 +44,6 @@ func (s *Server) CreateGame() *game.Game {
 	defer s.Unlock()
 
 	s.Games = append(s.Games, g)
-
-	fmt.Printf("Games: %d\n", len(s.Games))
 
 	return g
 }
