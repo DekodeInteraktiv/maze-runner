@@ -28,9 +28,17 @@ func (s *Server) apiRoutes() chi.Router {
 
 	r.Route("/game", func(r chi.Router) {
 		r.Get("/create", s.gameCreate())
-		r.Get("/{id}/info", s.gameInfo())
-		r.Get("/{id}/start", s.gameStart())
-		r.Post("/{id}/player/register", s.playerCreate())
+
+		r.Route("/{gameID}", func(r chi.Router) {
+			r.Get("/info", s.gameInfo())
+			r.Get("/start", s.gameStart())
+
+			r.Route("/player", func(r chi.Router) {
+				r.Post("/register/{password}", s.playerCreate())
+
+				r.Post("/move", s.playerMove())
+			})
+		})
 	})
 
 	return r
