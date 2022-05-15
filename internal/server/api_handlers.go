@@ -34,17 +34,11 @@ func (s *Server) gameCreate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		g := s.CreateGame()
 
-		var newGame *CreateGameResponse
+		g.RLock()
+		defer g.RUnlock()
+		newGame := (*CreateGameResponse)(g)
 
-		newGame = (*CreateGameResponse)(g)
-
-		data := struct {
-			Game *CreateGameResponse
-		}{
-			newGame,
-		}
-
-		writeJSON(w, data, 200)
+		writeJSON(w, newGame, 200)
 	}
 }
 
@@ -66,16 +60,10 @@ func (s *Server) gameInfo() http.HandlerFunc {
 
 		g := s.GetGameByID(id)
 
-		//g.Lock()
-		//defer g.Unlock()
+		g.RLock()
+		defer g.RUnlock()
 
-		data := struct {
-			Game *game.Game
-		}{
-			g,
-		}
-
-		writeJSON(w, data, 200)
+		writeJSON(w, g, 200)
 	}
 }
 
@@ -97,15 +85,15 @@ func (s *Server) gameStart() http.HandlerFunc {
 
 		g := s.GetGameByID(id)
 
-		//g.Lock()
-		//defer g.Unlock()
 		g.Start()
 
+		g.RLock()
 		data := struct {
 			Message string
 		}{
 			fmt.Sprintf("Game (ID: %d) is starting in 5 seconds.", g.ID),
 		}
+		g.RUnlock()
 
 		writeJSON(w, data, 200)
 	}
@@ -119,6 +107,8 @@ func (s *Server) playerCreate() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		gamePass := chi.URLParam(r, "password")
+
 		// Get the JSON encoded body data.
 		var payload Payload
 		err := json.NewDecoder(r.Body).Decode(&payload)
@@ -126,21 +116,21 @@ func (s *Server) playerCreate() http.HandlerFunc {
 			data := struct {
 				Error string
 			}{
-				"Invalid Game ID",
+				"Invalid POST data.",
 			}
 			writeJSON(w, data, http.StatusBadRequest)
 			return
 		}
 
 		// Get the game ID and search for the game.
-		idStr := chi.URLParam(r, "id")
+		idStr := chi.URLParam(r, "gameID")
 
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			data := struct {
 				Error string
 			}{
-				"Invalid Game ID",
+				"Invalid Game ID.",
 			}
 
 			writeJSON(w, data, http.StatusNotFound)
@@ -148,6 +138,17 @@ func (s *Server) playerCreate() http.HandlerFunc {
 		}
 
 		g := s.GetGameByID(id)
+
+		if gamePass != g.Password {
+			data := struct {
+				Error string
+			}{
+				"Invalid game password.",
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
 
 		// Register the player in the game.
 		p := g.RegisterPlayer(payload.Name, payload.Color)
@@ -161,6 +162,100 @@ func (s *Server) playerCreate() http.HandlerFunc {
 		writeJSON(w, data, 200)
 	}
 }
+
+// playerMove moves a player.
+func (s *Server) playerMove() http.HandlerFunc {
+	type Payload struct {
+		Direction string `json:"direction"`
+		Spaces    uint   `json:"spaces"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Get the JSON encoded body data.
+		var payload Payload
+		err := json.NewDecoder(r.Body).Decode(&payload)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Invalid POST data.",
+			}
+			writeJSON(w, data, http.StatusBadRequest)
+			return
+		}
+
+		// Get the game ID and search for the game.
+		gameIDStr := chi.URLParam(r, "gameID")
+
+		gameID, err := strconv.Atoi(gameIDStr)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Invalid Game ID.",
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
+
+		g := s.GetGameByID(gameID)
+
+		// Get Auth Token.
+		ctx := r.Context()
+		token := ctx.Value("Token").(string)
+
+		// Register the player in the game.
+		p, err := g.GetPlayerByToken(token)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Authentication token does not match any player registered for this game.",
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
+
+		data := struct {
+			Player *game.Player
+		}{
+			p,
+		}
+
+		writeJSON(w, data, 200)
+	}
+}
+
+/*
+{
+    "id": 2,
+    "password": "distracted",
+    "token": "7db66e97a5b64aaba34cd1fcdc79c0f5",
+    "active": false,
+    "timer": 0,
+    "players": null
+}
+
+{
+    "Player": {
+        "Name": "Cath",
+        "ID": 1,
+        "Sprite": null,
+        "Color": "#eeeeee",
+        "Pos": {
+            "X": 0,
+            "Y": 0
+        },
+        "Token": "58eefe57ee7f424f92c2cf69dd76e8d7"
+    }
+}
+
+*/
+
+// game token: 6cb936ddd08d4c53aed39fb8e1b940f2
+// player token:
 
 // register ...
 /*func (s *Server) register() http.HandlerFunc {
