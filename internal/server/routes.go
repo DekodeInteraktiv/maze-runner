@@ -20,12 +20,6 @@ func (s *Server) routes() {
 func (s *Server) apiRoutes() chi.Router {
 	r := chi.NewRouter()
 
-	//r.Post("/register/{name}", s.register())
-
-	//r.Get("/player/get", s.getPlayer())
-
-	//r.Get("/get/maze", s.imageExample())
-
 	r.Route("/game", func(r chi.Router) {
 		r.Get("/create", s.gameCreate())
 
