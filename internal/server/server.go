@@ -84,10 +84,7 @@ func (s *Server) Setup() {
 		MaxAge:           300,
 	}))
 
-	// Set a timeout value on the request context (ctx), that will signal
-	// through ctx.Done() that the request has timed out and further
-	// processing should be stopped.
-	s.Router.Use(middleware.Timeout(15 * time.Second))
+	s.Router.Use(middleware.Timeout(5 * time.Second))
 
 	s.Router.Use(s.VerifyToken())
 
