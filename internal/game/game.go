@@ -1,11 +1,14 @@
 package game
 
 import (
+	"fmt"
+	"math/rand"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/google/uuid"
+	noise "github.com/ojrac/opensimplex-go"
 )
 
 var (
@@ -18,59 +21,53 @@ var (
 )
 
 type Game struct {
-	ID           int                       `json:"id"`
-	Password     string                    `json:"password"`
-	Token        string                    `json:"-"`
-	Active       bool                      `json:"active"`
-	Timer        uint                      `json:"timer"`
-	Players      []*Player                 `json:"players"`
-	Maze         [][]uint8                 `json:"-"`
-	Maze2        map[uint8]map[uint8]uint8 `json:"maze"`
+	ID           int       `json:"id"`
+	Password     string    `json:"password"`
+	Token        string    `json:"-"`
+	Active       bool      `json:"active"`
+	Timer        uint      `json:"timer"`
+	Players      []*Player `json:"players"`
+	Maze         [][]uint8 `json:"maze"`
 	sync.RWMutex `json:"-"`
 }
 
 // New returns a new game instance.
 func New() *Game {
-	//m := maze.Generate(20, 20, time.Now().UnixNano())
+	width := 50
+	height := 50
 
-	//m := make([][]uint8, 20)
-	//for i := range m {
-	//m[i] = make([]uint8, 20)
-	//}
+	simplex := noise.New(rand.Int63())
 
-	m := make([][]uint8, 10)
-	m[0] = []uint8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	m[1] = []uint8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	m[2] = []uint8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	m[3] = []uint8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	m[4] = []uint8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	m[5] = []uint8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	m[6] = []uint8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	m[7] = []uint8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	m[8] = []uint8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	m[9] = []uint8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	grid := make([][]uint8, width)
+	for i := range grid {
+		grid[i] = make([]uint8, height)
+	}
 
-	m2 := make(map[uint8]map[uint8]uint8, 10)
+	for x := 0; x < width; x++ {
 
-	m2[1] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m2[2] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m2[3] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m2[4] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m2[5] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m2[6] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m2[7] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m2[8] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m2[9] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m2[10] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
+		for y := 0; y < height; y++ {
 
-	m2[1][7] = 1
+			var tile uint8
+			tile = 0
+			v := simplex.Eval2(float64(x), float64(y))
+			fmt.Printf("Noise: %f X: %d Y: %d \n", v, x, y)
+			if v < -0.35 {
+				fmt.Printf("Tile: %d X: %d Y: %d \n", tile, x, y)
+				tile = 1
+			}
+			grid[x][y] = tile
+
+		}
+
+	}
+
+	fmt.Printf("%+v", grid)
 
 	return &Game{
 		ID:       gameID.new(),
 		Password: generatePassword(),
 		Token:    strings.Replace(uuid.New().String(), "-", "", -1),
-		Maze:     m,
-		Maze2:    m2,
+		Maze:     grid,
 		Active:   false,
 	}
 }

@@ -72,6 +72,8 @@ func (s *Server) Setup() {
 	s.Router.Use(middleware.Logger)
 	s.Router.Use(middleware.Recoverer)
 	s.Router.Use(middleware.RedirectSlashes)
+	s.Router.Use(middleware.Timeout(5 * time.Second))
+	s.Router.Use(s.VerifyToken())
 
 	s.Router.Use(cors.Handler(cors.Options{
 		// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
@@ -83,10 +85,6 @@ func (s *Server) Setup() {
 		AllowCredentials: false,
 		MaxAge:           300,
 	}))
-
-	s.Router.Use(middleware.Timeout(5 * time.Second))
-
-	s.Router.Use(s.VerifyToken())
 
 	s.Router.Handle("/static/*", http.FileServer(http.FS(assets.Content)))
 
