@@ -45,7 +45,7 @@ func (s *Server) gameCreate() http.HandlerFunc {
 // gameInfo gets info for a specific game.
 func (s *Server) gameInfo() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := chi.URLParam(r, "id")
+		idStr := chi.URLParam(r, "gameID")
 
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
@@ -70,7 +70,7 @@ func (s *Server) gameInfo() http.HandlerFunc {
 // gameStart schedules the start of the game.
 func (s *Server) gameStart() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := chi.URLParam(r, "id")
+		idStr := chi.URLParam(r, "gameID")
 
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
