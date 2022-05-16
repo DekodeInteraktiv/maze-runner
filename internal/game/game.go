@@ -25,7 +25,7 @@ type Game struct {
 	Timer        uint                      `json:"timer"`
 	Players      []*Player                 `json:"players"`
 	Maze         [][]uint8                 `json:"-"`
-	Maze2        map[uint8]map[uint8]uint8 `json:"-"`
+	Maze2        map[uint8]map[uint8]uint8 `json:"maze"`
 	sync.RWMutex `json:"-"`
 }
 
