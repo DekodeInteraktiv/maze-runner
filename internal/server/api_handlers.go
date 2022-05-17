@@ -20,13 +20,13 @@ type error struct {
 // gameCreate sets up a new game.
 func (s *Server) gameCreate() http.HandlerFunc {
 	type CreateGameResponse struct {
-		ID           int            `json:"id"`
-		Password     string         `json:"password"`
-		Token        string         `json:"token"`
-		Active       bool           `json:"active"`
-		Timer        uint           `json:"timer"`
-		Players      []*game.Player `json:"players"`
-		Maze         [][]uint8      `json:"maze"`
+		ID           int                   `json:"id"`
+		Password     string                `json:"password"`
+		Token        string                `json:"token"`
+		Active       bool                  `json:"active"`
+		Timer        uint                  `json:"timer"`
+		Players      []*game.Player        `json:"players"`
+		Maze         [][]game.MazeTileType `json:"maze"`
 		sync.RWMutex `json:"-"`
 	}
 

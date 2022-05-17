@@ -1,27 +1,64 @@
 package game
 
-import "sync"
+import (
+	"math/rand"
+	"sync"
+
+	noise "github.com/ojrac/opensimplex-go"
+)
 
 type Maze struct {
-	Map           map[uint8]map[uint8]uint8 `json:"maze"`
-	*sync.RWMutex `json:"-"`
+	Grid         [][]MazeTileType `json:"grid"`
+	Claims       [][]ClaimType    `json:"claims"`
+	sync.RWMutex `json:"-"`
 }
 
-func NewMaze(size uint) *Maze {
-	m := make(map[uint8]map[uint8]uint8, size)
+type MazeTileType uint16 // 0-255
 
-	m[1] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m[2] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m[3] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m[4] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m[5] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m[6] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m[7] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m[8] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m[9] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
-	m[10] = map[uint8]uint8{1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0}
+const (
+	Floor MazeTileType = iota
+	Wall
+	Portal
+)
+
+type ClaimType uint8 // 0-255
+
+const (
+	Unclaimed ClaimType = iota
+	Red
+	Blue
+	Green
+	Yellow
+)
+
+func NewMaze(size int) *Maze {
+	simplex := noise.New(rand.Int63())
+
+	grid := make([][]MazeTileType, size)
+	for i := range grid {
+		grid[i] = make([]MazeTileType, size)
+	}
+
+	claims := make([][]ClaimType, size)
+	for i := range claims {
+		claims[i] = make([]ClaimType, size)
+	}
+
+	for x := 0; x < size; x++ {
+		for y := 0; y < size; y++ {
+			var tile MazeTileType
+			tile = Floor
+			v := simplex.Eval2(float64(x), float64(y))
+			if v < -0.35 {
+				tile = Wall
+			}
+			grid[x][y] = tile
+			claims[x][y] = Unclaimed
+		}
+	}
 
 	return &Maze{
-		Map: m,
+		Grid:   grid,
+		Claims: claims,
 	}
 }

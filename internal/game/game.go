@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"math/rand"
 	"strings"
 	"sync"
@@ -21,47 +20,41 @@ var (
 )
 
 type Game struct {
-	ID           int       `json:"id"`
-	Password     string    `json:"password"`
-	Token        string    `json:"-"`
-	Active       bool      `json:"active"`
-	Timer        uint      `json:"timer"`
-	Players      []*Player `json:"players"`
-	Maze         [][]uint8 `json:"maze"`
+	ID           int              `json:"id"`
+	Password     string           `json:"password"`
+	Token        string           `json:"-"`
+	Active       bool             `json:"active"`
+	Timer        uint             `json:"timer"`
+	Players      []*Player        `json:"players"`
+	Maze         [][]MazeTileType `json:"maze"`
 	sync.RWMutex `json:"-"`
 }
 
+// TODO: Maze as [][]uint8 does not work as []uint8 is []byte and gets base64 encoded.
+// Change to Maze *Maze with a Maze struct, with its own JSON encode method perhaps?
+
 // New returns a new game instance.
-func New() *Game {
-	width := 50
-	height := 50
+func New(size int) *Game {
+	//maze := NewMaze(size)
 
 	simplex := noise.New(rand.Int63())
 
-	grid := make([][]uint8, width)
+	grid := make([][]MazeTileType, size)
 	for i := range grid {
-		grid[i] = make([]uint8, height)
+		grid[i] = make([]MazeTileType, size)
 	}
 
-	for x := 0; x < width; x++ {
-
-		for y := 0; y < height; y++ {
-
-			var tile uint8
-			tile = 0
+	for x := 0; x < size; x++ {
+		for y := 0; y < size; y++ {
+			var tile MazeTileType
+			tile = Floor
 			v := simplex.Eval2(float64(x), float64(y))
-			fmt.Printf("Noise: %f X: %d Y: %d \n", v, x, y)
 			if v < -0.35 {
-				fmt.Printf("Tile: %d X: %d Y: %d \n", tile, x, y)
-				tile = 1
+				tile = Wall
 			}
 			grid[x][y] = tile
-
 		}
-
 	}
-
-	fmt.Printf("%+v", grid)
 
 	return &Game{
 		ID:       gameID.new(),

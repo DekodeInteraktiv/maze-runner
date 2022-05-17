@@ -39,7 +39,7 @@ func New(l *log.Logger, c *config.Config) *Server {
 }
 
 func (s *Server) CreateGame() *game.Game {
-	g := game.New()
+	g := game.New(50)
 
 	s.Lock()
 	defer s.Unlock()
