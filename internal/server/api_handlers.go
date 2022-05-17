@@ -149,6 +149,17 @@ func (s *Server) playerCreate() http.HandlerFunc {
 			return
 		}
 
+		if len(g.Players) >= 4 {
+			data := struct {
+				Error string
+			}{
+				"The game is full.",
+			}
+
+			writeJSON(w, data, http.StatusBadRequest)
+			return
+		}
+
 		// Register the player in the game.
 		p := g.RegisterPlayer(payload.Name, payload.Color)
 
@@ -166,7 +177,7 @@ func (s *Server) playerCreate() http.HandlerFunc {
 func (s *Server) playerMove() http.HandlerFunc {
 	type Payload struct {
 		Direction string `json:"direction"`
-		Spaces    uint   `json:"spaces"`
+		Distance  uint   `json:"distance"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -215,6 +226,18 @@ func (s *Server) playerMove() http.HandlerFunc {
 
 			writeJSON(w, data, http.StatusNotFound)
 			return
+		}
+
+		// Move the player.
+		switch payload.Direction {
+		case "up":
+			p.Pos.MoveNorth()
+		case "down":
+			p.Pos.MoveSouth()
+		case "left":
+			p.Pos.MoveWest()
+		case "right":
+			p.Pos.MoveEast()
 		}
 
 		data := struct {
