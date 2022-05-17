@@ -114,17 +114,30 @@ func (g *Game) RegisterPlayer(name, color string) *Player {
 	g.Lock()
 	defer g.Unlock()
 
-	p := Player{
+	var pos *Point
+
+	switch len(g.Players) {
+	case 0:
+		pos = &Point{X: 0, Y: 0}
+	case 1:
+		pos = &Point{X: 49, Y: 49}
+	case 2:
+		pos = &Point{X: 0, Y: 49}
+	case 3:
+		pos = &Point{X: 49, Y: 0}
+	}
+
+	p := &Player{
 		ID:    playerID.new(),
 		Name:  name,
 		Color: color,
 		Token: strings.Replace(uuid.New().String(), "-", "", -1),
-		Pos:   &Point{X: 0, Y: 0},
+		Pos:   pos,
 	}
 
-	g.Players = append(g.Players, &p)
+	g.Players = append(g.Players, p)
 
-	return &p
+	return p
 }
 
 // GetPlayerByToken finds a player by their token.
