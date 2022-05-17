@@ -26,6 +26,34 @@ type Point struct {
 	X, Y int
 }
 
+func (p *Point) North() Point {
+	return Point{
+		X: p.X,
+		Y: p.Y + 1,
+	}
+}
+
+func (p *Point) South() Point {
+	return Point{
+		X: p.X,
+		Y: p.Y - 1,
+	}
+}
+
+func (p *Point) West() Point {
+	return Point{
+		X: p.X - 1,
+		Y: p.Y,
+	}
+}
+
+func (p *Point) East() Point {
+	return Point{
+		X: p.X + 1,
+		Y: p.Y,
+	}
+}
+
 func (p *Point) MoveNorth() {
 	p.Y++
 }

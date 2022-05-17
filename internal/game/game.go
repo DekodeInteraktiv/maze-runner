@@ -154,6 +154,11 @@ func (g *Game) GetPlayerByToken(token string) (*Player, error) {
 	return nil, nil
 }
 
+func (g *Game) IsValidMove(newPos Point) bool {
+
+	return true
+}
+
 type incrementer struct {
 	sync.Mutex
 	id int

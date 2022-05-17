@@ -228,16 +228,41 @@ func (s *Server) playerMove() http.HandlerFunc {
 			return
 		}
 
+		for _, player := range g.Players {
+			if player.ID != p.ID && p.Pos == player.Pos {
+				data := struct {
+					Error string
+				}{
+					"Player is already at this location.",
+				}
+
+				writeJSON(w, data, http.StatusBadRequest)
+				return
+			}
+		}
+
 		// Move the player.
 		switch payload.Direction {
 		case "up":
-			p.Pos.MoveNorth()
+			newPos := p.Pos.North()
+			if g.Maze[newPos.X][newPos.Y] == 0 {
+				p.Pos.MoveNorth()
+			}
 		case "down":
-			p.Pos.MoveSouth()
+			newPos := p.Pos.South()
+			if g.Maze[newPos.X][newPos.Y] == 0 {
+				p.Pos.MoveSouth()
+			}
 		case "left":
-			p.Pos.MoveWest()
+			newPos := p.Pos.West()
+			if g.Maze[newPos.X][newPos.Y] == 0 {
+				p.Pos.MoveWest()
+			}
 		case "right":
-			p.Pos.MoveEast()
+			newPos := p.Pos.East()
+			if g.Maze[newPos.X][newPos.Y] == 0 {
+				p.Pos.MoveEast()
+			}
 		}
 
 		data := struct {
