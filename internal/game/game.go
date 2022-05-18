@@ -25,8 +25,11 @@ type Game struct {
 	Token        string           `json:"-"`
 	Active       bool             `json:"active"`
 	Timer        uint             `json:"timer"`
+	TimeLimit    uint             `json:"time_limit"`
 	Players      []*Player        `json:"players"`
+	Size         int              `json:"size"`
 	Maze         [][]MazeTileType `json:"maze"`
+	Claims       [][]ClaimType    `json:"claims"`
 	sync.RWMutex `json:"-"`
 }
 
@@ -34,7 +37,7 @@ type Game struct {
 // Change to Maze *Maze with a Maze struct, with its own JSON encode method perhaps?
 
 // New returns a new game instance.
-func New(size int) *Game {
+func New(size int, distribution float64, timelimit uint) *Game {
 	//maze := NewMaze(size)
 
 	simplex := noise.New(rand.Int63())
@@ -44,24 +47,33 @@ func New(size int) *Game {
 		grid[i] = make([]MazeTileType, size)
 	}
 
+	claims := make([][]ClaimType, size)
+	for i := range claims {
+		claims[i] = make([]ClaimType, size)
+	}
+
 	for x := 0; x < size; x++ {
 		for y := 0; y < size; y++ {
 			var tile MazeTileType
 			tile = Floor
 			v := simplex.Eval2(float64(x), float64(y))
-			if v < -0.35 {
+			if v < distribution {
 				tile = Wall
 			}
 			grid[x][y] = tile
+			claims[x][y] = Unclaimed
 		}
 	}
 
 	return &Game{
-		ID:       gameID.new(),
-		Password: generatePassword(),
-		Token:    strings.Replace(uuid.New().String(), "-", "", -1),
-		Maze:     grid,
-		Active:   false,
+		ID:        gameID.new(),
+		Password:  generatePassword(),
+		Token:     strings.Replace(uuid.New().String(), "-", "", -1),
+		TimeLimit: timelimit,
+		Size:      size,
+		Maze:      grid,
+		Claims:    claims,
+		Active:    false,
 	}
 }
 
@@ -94,8 +106,7 @@ func (g *Game) runGame() {
 				g.Lock()
 				g.Timer++
 				g.Unlock()
-				// If 5 minutes (300 seconds) has passed, end the game.
-				if g.Timer >= 30 {
+				if g.Timer >= g.TimeLimit {
 					ticker.Stop()
 
 					g.Lock()
@@ -115,22 +126,28 @@ func (g *Game) RegisterPlayer(name, color string) *Player {
 	defer g.Unlock()
 
 	var pos *Point
+	var team ClaimType
 
 	switch len(g.Players) {
 	case 0:
 		pos = &Point{X: 0, Y: 0}
+		team = Red
 	case 1:
 		pos = &Point{X: 49, Y: 49}
+		team = Blue
 	case 2:
 		pos = &Point{X: 0, Y: 49}
+		team = Green
 	case 3:
 		pos = &Point{X: 49, Y: 0}
+		team = Yellow
 	}
 
 	p := &Player{
 		ID:    playerID.new(),
 		Name:  name,
 		Color: color,
+		Team:  team,
 		Token: strings.Replace(uuid.New().String(), "-", "", -1),
 		Pos:   pos,
 	}
@@ -154,9 +171,16 @@ func (g *Game) GetPlayerByToken(token string) (*Player, error) {
 	return nil, nil
 }
 
-func (g *Game) IsValidMove(newPos Point) bool {
+func (g *Game) MovePlayer(p *Player, newPos Point) {
+	g.Lock()
+	defer g.Unlock()
 
-	return true
+	// Move to new position.
+	p.Pos.X = newPos.X
+	p.Pos.Y = newPos.Y
+
+	// Claim tile.
+	g.Claims[p.Pos.X][p.Pos.Y] = p.Team
 }
 
 type incrementer struct {

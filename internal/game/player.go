@@ -11,6 +11,7 @@ type Player struct {
 	Color  string
 	Pos    *Point
 	Token  string
+	Team   ClaimType
 	sync.RWMutex
 }
 

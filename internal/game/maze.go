@@ -13,7 +13,7 @@ type Maze struct {
 	sync.RWMutex `json:"-"`
 }
 
-type MazeTileType uint16 // 0-255
+type MazeTileType uint16
 
 const (
 	Floor MazeTileType = iota
@@ -21,7 +21,7 @@ const (
 	Portal
 )
 
-type ClaimType uint8 // 0-255
+type ClaimType uint16
 
 const (
 	Unclaimed ClaimType = iota

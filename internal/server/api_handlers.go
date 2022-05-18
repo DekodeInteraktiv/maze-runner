@@ -19,19 +19,53 @@ type error struct {
 
 // gameCreate sets up a new game.
 func (s *Server) gameCreate() http.HandlerFunc {
+	type Payload struct {
+		Size         int     `json:"size"`
+		Distribution float64 `json:"distribution"`
+		TimeLimit    uint    `json:"timelimit"`
+	}
+
 	type CreateGameResponse struct {
 		ID           int                   `json:"id"`
 		Password     string                `json:"password"`
 		Token        string                `json:"token"`
 		Active       bool                  `json:"active"`
 		Timer        uint                  `json:"timer"`
+		TimeLimit    uint                  `json:"time_limit"`
 		Players      []*game.Player        `json:"players"`
+		Size         int                   `json:"size"`
 		Maze         [][]game.MazeTileType `json:"maze"`
+		Claims       [][]game.ClaimType    `json:"claims"`
 		sync.RWMutex `json:"-"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		g := s.CreateGame()
+		// Get the JSON encoded body data.
+		var payload Payload
+		err := json.NewDecoder(r.Body).Decode(&payload)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Invalid POST data.",
+			}
+			writeJSON(w, data, http.StatusBadRequest)
+			return
+		}
+
+		if payload.Size == 0 || payload.Size < 5 || payload.Size > 200 {
+			payload.Size = 20
+		}
+
+		if payload.Distribution == 0 || payload.Distribution < -0.8 || payload.Distribution > 0.8 {
+			payload.Distribution = -0.35
+		}
+
+		if payload.TimeLimit == 0 || payload.TimeLimit < 15 || payload.TimeLimit > 900 {
+			payload.TimeLimit = 60
+		}
+
+		g := s.CreateGame(payload.Size, payload.Distribution, payload.TimeLimit)
 
 		g.RLock()
 		defer g.RUnlock()
@@ -177,7 +211,7 @@ func (s *Server) playerCreate() http.HandlerFunc {
 func (s *Server) playerMove() http.HandlerFunc {
 	type Payload struct {
 		Direction string `json:"direction"`
-		Distance  uint   `json:"distance"`
+		Distance  int    `json:"distance"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -215,7 +249,7 @@ func (s *Server) playerMove() http.HandlerFunc {
 		ctx := r.Context()
 		token := ctx.Value("Token").(string)
 
-		// Register the player in the game.
+		// Get the player by auth token.
 		p, err := g.GetPlayerByToken(token)
 		if err != nil {
 			data := struct {
@@ -224,46 +258,64 @@ func (s *Server) playerMove() http.HandlerFunc {
 				"Authentication token does not match any player registered for this game.",
 			}
 
-			writeJSON(w, data, http.StatusNotFound)
+			writeJSON(w, data, http.StatusForbidden)
 			return
 		}
 
+		// Calculate the new position.
+		var newPos game.Point
+
+		switch payload.Direction {
+		case "north":
+			newPos = p.Pos.North()
+		case "south":
+			newPos = p.Pos.South()
+		case "west":
+			newPos = p.Pos.West()
+		case "east":
+			newPos = p.Pos.East()
+		}
+
+		// Check if another player is already in the new position.
 		for _, player := range g.Players {
 			if player.ID != p.ID && p.Pos == player.Pos {
 				data := struct {
 					Error string
 				}{
-					"Player is already at this location.",
+					"Another player is already at this location.",
 				}
 
-				writeJSON(w, data, http.StatusBadRequest)
+				writeJSON(w, data, http.StatusConflict)
 				return
 			}
 		}
 
-		// Move the player.
-		switch payload.Direction {
-		case "up":
-			newPos := p.Pos.North()
-			if g.Maze[newPos.X][newPos.Y] == 0 {
-				p.Pos.MoveNorth()
+		// Check if the player is trying to move outside the maze.
+		if newPos.X < 0 || newPos.X > (g.Size-1) || newPos.Y < 0 || newPos.Y > (g.Size-1) {
+			data := struct {
+				Error string
+			}{
+				"Move position out of maze bounds.",
 			}
-		case "down":
-			newPos := p.Pos.South()
-			if g.Maze[newPos.X][newPos.Y] == 0 {
-				p.Pos.MoveSouth()
-			}
-		case "left":
-			newPos := p.Pos.West()
-			if g.Maze[newPos.X][newPos.Y] == 0 {
-				p.Pos.MoveWest()
-			}
-		case "right":
-			newPos := p.Pos.East()
-			if g.Maze[newPos.X][newPos.Y] == 0 {
-				p.Pos.MoveEast()
-			}
+
+			writeJSON(w, data, http.StatusConflict)
+			return
 		}
+
+		// Check if the player is trying to move into a wall.
+		if g.Maze[newPos.Y][newPos.X] == game.Wall {
+			data := struct {
+				Error string
+			}{
+				"Cannot move into a wall.",
+			}
+
+			writeJSON(w, data, http.StatusConflict)
+			return
+		}
+
+		// Move player.
+		g.MovePlayer(p, newPos)
 
 		data := struct {
 			Player *game.Player
