@@ -1,6 +1,9 @@
 package server
 
 import (
+	"net/http"
+
+	"github.com/PeterBooker/maze-game-server/internal/assets"
 	"github.com/go-chi/chi"
 )
 
@@ -9,6 +12,10 @@ func (s *Server) routes() {
 	s.Router.Get("/", s.webIndex())
 	s.Router.Get("/favicon.ico", s.webFavicon())
 	s.Router.Get("/docs", s.webDocs())
+
+	// Viewer
+	s.Router.Get("/viewer", s.viewerIndex())
+	s.Router.Handle("/viewer/static/*", http.FileServer(http.FS(assets.Content)))
 
 	// Add API v1 routes
 	s.Router.Mount("/api/v1", s.apiRoutes())

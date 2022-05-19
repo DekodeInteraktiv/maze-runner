@@ -24,6 +24,18 @@ type Page struct {
 	Time        time.Time
 }
 
+// viewerIndex ...
+func (s *Server) viewerIndex() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html")
+		w.Header().Set("Vary", "Accept-Encoding")
+
+		data, _ := assets.Content.ReadFile("viewer/index.html")
+
+		w.Write(data)
+	}
+}
+
 // webIndex ...
 func (s *Server) webIndex() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
