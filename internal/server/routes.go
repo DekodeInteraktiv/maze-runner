@@ -14,11 +14,14 @@ func (s *Server) routes() {
 
 	// Viewer
 	s.Router.Get("/viewer", s.viewerIndex())
+	s.Router.Get("/viewer/", s.viewerIndex())
+	s.Router.Get("/viewer/{id}", s.viewerIndex())
 	s.Router.Get("/viewer/favicon.ico", s.viewerFavicon())
 	s.Router.Handle("/viewer/static/*", http.FileServer(http.FS(assets.Content)))
 
 	// Controller
 	s.Router.Get("/controller", s.controllerIndex())
+	s.Router.Get("/controller/", s.controllerIndex())
 	s.Router.Get("/controller/favicon.ico", s.controllerFavicon())
 	s.Router.Handle("/controller/static/*", http.FileServer(http.FS(assets.Content)))
 

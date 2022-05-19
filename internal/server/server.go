@@ -53,6 +53,10 @@ func (s *Server) GetGameByID(id int) *game.Game {
 	s.Lock()
 	defer s.Unlock()
 
+	if id > len(s.Games) {
+		return nil
+	}
+
 	for _, g := range s.Games {
 		if g.ID == id {
 			return g
