@@ -6,7 +6,7 @@ import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <BrowserRouter>
+  <BrowserRouter basename="/viewer">
     <Routes>
       <Route path="/" element={<App />}>
         <Route path=":game" element={<App />} />
