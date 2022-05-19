@@ -303,7 +303,7 @@ func (s *Server) playerMove() http.HandlerFunc {
 		}
 
 		// Check if the player is trying to move into a wall.
-		if g.Maze[newPos.Y][newPos.X] == game.Wall {
+		if g.Maze[newPos.X][newPos.Y] == game.Wall {
 			data := struct {
 				Error string
 			}{
