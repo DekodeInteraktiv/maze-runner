@@ -1,0 +1,392 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+body {
+	background-color: #282c34;
+	color: #fff;
+	font-family: 'VT323', monospace;
+
+	--panel-size: 12vh;
+	--map-size: calc(100vh - var(--panel-size) * 2);
+	--map-X: 50;
+	--map-Y: 50;
+	--blue: #ff9100;
+	--pixelated-small: polygon(
+    0px 2px,
+    2px 2px,
+    2px 0px,
+    calc(100% - 2px) 0px,
+    calc(100% - 2px) 2px,
+    100% 2px,
+    100% calc(100% - 2px),
+    calc(100% - 2px) calc(100% - 2px),
+    calc(100% - 2px) 100%,
+    2px 100%,
+    2px calc(100% - 2px),
+    0px calc(100% - 2px)
+  );
+	--pixelated: polygon(
+    0px 8px,
+    4px 8px,
+    4px 4px,
+    8px 4px,
+    8px 0px,
+    calc(100% - 8px) 0px,
+    calc(100% - 8px) 4px,
+    calc(100% - 4px) 4px,
+    calc(100% - 4px) 8px,
+    100% 8px,
+    100% calc(100% - 8px),
+    calc(100% - 4px) calc(100% - 8px),
+    calc(100% - 4px) calc(100% - 4px),
+    calc(100% - 8px) calc(100% - 4px),
+    calc(100% - 8px) 100%,
+    8px 100%,
+    8px calc(100% - 4px),
+    4px calc(100% - 4px),
+    4px calc(100% - 8px),
+    0px calc(100% - 8px)
+  );
+}
+
+* {
+	box-sizing: border-box;
+}
+
+.app-head,
+.app-foot {
+	height: var(--panel-size);
+	display: flex;
+	justify-content: space-between;
+	padding: 10px 20px;
+	align-items: center;
+}
+
+.map {
+	height: var(--map-size);
+	margin: 0 auto;
+	width: var(--map-size);
+	position: relative;
+	display: flex;
+}
+
+.map::before {
+	display: block;
+	position: absolute;
+	content: "";
+	background: rgba(40, 44, 52, 0.8);
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	z-index: 50;
+	opacity: 0;
+	transition: all 250ms;
+}
+
+.map.countdown::before {
+	opacity: 1;
+}
+
+.map .countdown {
+	display: block;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	z-index: 60;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	animation: colorIn 400ms;
+	font-size: 50vh;
+}
+
+.row {
+	display: flex;
+	width: calc( var(--map-size) / var(--map-X) );
+	flex-wrap: wrap;
+	flex-direction: column-reverse;
+}
+
+.cell {
+	align-items: center;
+	border-bottom: 0;
+	color: black;
+	display: flex;
+	height: calc( var(--map-size) / var(--map-Y) );
+	justify-content: center;
+	position: relative;
+	width: calc( var(--map-size) / var(--map-X) );
+}
+
+.cell:first-child {
+	border-left: 0;
+}
+
+.row:first-child .cell {
+	border-top: 0;
+}
+
+.cell::before,
+.color,
+.obstacle {
+	background: #3d434f;
+	clip-path: var(--pixelated-small);
+	content: "";
+	height: 80%;
+	left: 10%;
+	position: absolute;
+	top: 10%;
+	width: 80%;
+	z-index: -1;
+}
+
+.obstacle {
+	background: url("https://s3.amazonaws.com/spoonflower/public/design_thumbnails/0396/3573/rbricks_large_shop_thumb.png");
+	background-size: cover;
+	border-radius: 0;
+	height: 100%;
+	left: 0;
+	top: 0;
+	width: 100%;
+	z-index: 2;
+	background: black;
+}
+
+.flicker {
+	animation: flicker 1000ms;
+	animation-timing-function: steps(2, jump-start);
+	animation-iteration-count: infinite;
+}
+
+.color {
+	animation: colorIn 300ms;
+	z-index: 1;
+}
+
+.password {
+	display: block;
+	font-size: 24px;
+}
+
+.password span {
+	color: orange;
+}
+
+.color-1 {
+	background: red;
+}
+
+.color-2 {
+	background: var(--blue);
+}
+
+.color-3 {
+	background: green;
+}
+
+.color-4 {
+	background: pink;
+}
+
+.text-red {
+	color: red;
+}
+
+.text-blue {
+	color: var(--blue);
+}
+
+.text-green {
+	color: green;
+}
+
+.text-pink {
+	color: pink;
+}
+
+.branding img {
+	height: 8vh;
+	width: auto;
+}
+
+.player-area {
+	display: flex;
+	flex-direction: column;
+	background: #3d434f;
+	padding: 1vh 2vh;
+	clip-path: var(--pixelated);
+	min-width: 300px;
+}
+
+.player-area .name {
+	font-size: 5vh;
+}
+
+.player-area .score {
+	font-size: 3vh;
+}
+
+.player {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	z-index: 3;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	/* animation: dance 400ms; */
+	animation-iteration-count: infinite;
+}
+
+.player-head {
+	background: #d8d3c3;
+	width: 20%;
+	height: 20%;
+}
+
+.player-body {
+	background: teal;
+	max-height: 30px;
+	max-width: 40px;
+	width: 50%;
+	height: 30%;
+}
+
+.player-1 .player-body {
+	background: red;
+}
+
+.player-2 .player-body {
+	background: orange;
+}
+
+.player-3 .player-body {
+	background: blue;
+}
+
+.player-feet {
+	border-left: 8px solid #d8d3c3;
+	border-right: 8px solid #d8d3c3;
+	width: 42%;
+	height: 12%;
+}
+
+button {
+	background: transparent;
+	color: #fff;
+	font-family: 'VT323', monospace;
+	font-size: 3vh;
+	padding: 1vh 2vh;
+	cursor: pointer;
+	position: relative;
+	border: 0;
+}
+
+button:hover {
+	background: rgba(255,255,255,0.2)
+}
+
+.select-screen {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	height: 100vh;
+	justify-content: center;
+}
+
+.intro-players {
+	display: flex;
+	gap: 1vh;
+	margin: 20px 0 30px;
+}
+
+.intro-players .player {
+	width: 9vh;
+	height: 9vh;
+	animation: dance 400ms;
+	animation-iteration-count: infinite;
+}
+
+.intro-players .player:nth-child(1) .player-body {
+	background: red;
+}
+
+.intro-players .player:nth-child(2) {
+	animation-delay: 100ms;
+}
+.intro-players .player:nth-child(2) .player-body {
+	background: var(--blue);
+}
+
+.intro-players .player:nth-child(3) {
+	animation-delay: 200ms;
+}
+.intro-players .player:nth-child(3) .player-body {
+	background: green;
+}
+
+.intro-players .player:nth-child(4) {
+	animation-delay: 300ms;
+}
+.intro-players .player:nth-child(4) .player-body {
+	background: pink;
+}
+
+.select-screen .app-head,
+.select-screen .app-foot {
+	justify-content: center;
+	height: auto;
+}
+
+.select-screen .branding img {
+	height: 20vh;
+}
+
+.select-screen .controls {
+	text-align: center;
+}
+
+.timer {
+	font-size: 60px;
+	text-align: center;
+}
+
+.select-screen .controls button:first-child::before {
+	content: "> ";
+	animation: flicker 800ms;
+	animation-timing-function: steps(2, jump-start);
+	animation-iteration-count: infinite;
+}
+
+@keyframes colorIn {
+	from {
+		transform: scale(0.1);
+	}
+
+	to {
+		transform: scale(1);
+	}
+}
+
+@keyframes flicker {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes dance {
+	0%, 100% {
+		transform: rotate(-10deg);
+	}
+
+	50% {
+		transform: rotate(10deg);
+	}
+}
