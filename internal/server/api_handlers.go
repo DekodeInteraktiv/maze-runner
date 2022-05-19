@@ -262,6 +262,18 @@ func (s *Server) playerMove() http.HandlerFunc {
 			return
 		}
 
+		// Check game is active.
+		if g.Active == false {
+			data := struct {
+				Error string
+			}{
+				"The game is not active.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
+			return
+		}
+
 		// Calculate the new position.
 		var newPos game.Point
 

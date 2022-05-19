@@ -36,6 +36,38 @@ func (s *Server) viewerIndex() http.HandlerFunc {
 	}
 }
 
+// viewerFavicon ...
+func (s *Server) viewerFavicon() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "image/x-icon")
+		data, _ := assets.Content.ReadFile("viewer/favicon.ico")
+
+		w.Write(data)
+	}
+}
+
+// controllerIndex ...
+func (s *Server) controllerIndex() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html")
+		w.Header().Set("Vary", "Accept-Encoding")
+
+		data, _ := assets.Content.ReadFile("controller/index.html")
+
+		w.Write(data)
+	}
+}
+
+// controllerFavicon ...
+func (s *Server) controllerFavicon() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "image/x-icon")
+		data, _ := assets.Content.ReadFile("controller/favicon.ico")
+
+		w.Write(data)
+	}
+}
+
 // webIndex ...
 func (s *Server) webIndex() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
