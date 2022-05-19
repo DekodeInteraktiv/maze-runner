@@ -65,6 +65,26 @@ func New(size int, distribution float64, timelimit uint) *Game {
 		}
 	}
 
+	grid[0][0] = Floor
+	grid[1][0] = Floor
+	grid[0][1] = Floor
+	grid[1][1] = Floor
+
+	grid[49][49] = Floor
+	grid[48][49] = Floor
+	grid[49][48] = Floor
+	grid[48][48] = Floor
+
+	grid[0][49] = Floor
+	grid[1][49] = Floor
+	grid[0][48] = Floor
+	grid[1][48] = Floor
+
+	grid[49][0] = Floor
+	grid[49][1] = Floor
+	grid[48][0] = Floor
+	grid[48][1] = Floor
+
 	return &Game{
 		ID:        gameID.new(),
 		Password:  generatePassword(),
