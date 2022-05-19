@@ -93,6 +93,17 @@ func (s *Server) gameInfo() http.HandlerFunc {
 
 		g := s.GetGameByID(id)
 
+		if g == nil {
+			data := struct {
+				Error string
+			}{
+				"Game not found",
+			}
+
+			writeJSON(w, data, 404)
+			return
+		}
+
 		g.RLock()
 		defer g.RUnlock()
 
