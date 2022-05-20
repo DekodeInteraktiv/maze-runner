@@ -155,13 +155,13 @@ func (g *Game) RegisterPlayer(name, color string) *Player {
 		pos = &Point{X: 0, Y: 0}
 		team = Red
 	case 1:
-		pos = &Point{X: 49, Y: 49}
+		pos = &Point{X: g.Size - 1, Y: g.Size - 1}
 		team = Blue
 	case 2:
-		pos = &Point{X: 0, Y: 49}
+		pos = &Point{X: 0, Y: g.Size - 1}
 		team = Green
 	case 3:
-		pos = &Point{X: 49, Y: 0}
+		pos = &Point{X: g.Size - 1, Y: 0}
 		team = Yellow
 	}
 
