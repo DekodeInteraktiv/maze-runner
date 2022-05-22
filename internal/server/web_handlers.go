@@ -76,9 +76,9 @@ func (s *Server) webIndex() http.HandlerFunc {
 
 		message := `Welcome to the ` + s.Config.Name + `...
 		
-		Version: ` + s.Config.Version + `
-		Commit:  ` + s.Config.Commit + `
-		Date:    ` + s.Config.Date
+		Version: ` + s.Config.Version + `\n
+		Commit:  ` + s.Config.Commit + `\n
+		Date:    ` + s.Config.Date + `\n`
 
 		w.Write([]byte(message))
 	}
