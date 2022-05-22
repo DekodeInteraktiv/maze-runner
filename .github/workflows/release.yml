@@ -43,6 +43,7 @@ jobs:
         with:
           host: ${{ secrets.DEPLOY_HOSTNAME }}
           username: ${{ secrets.DEPLOY_USERNAME }}
+          key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
           port: 22
           script: systemctl stop maze
 
@@ -68,5 +69,6 @@ jobs:
         with:
           host: ${{ secrets.DEPLOY_HOSTNAME }}
           username: ${{ secrets.DEPLOY_USERNAME }}
+          key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
           port: 22
           script: systemctl stop maze
