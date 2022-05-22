@@ -355,9 +355,9 @@ func (s *Server) playerStatus() http.HandlerFunc {
 	type PlayerStatusResponse struct {
 		Name         string
 		ID           int
-		Sprite       []byte
 		Color        string
 		Pos          *game.Point
+		Team         game.ClaimType
 		Maze         [][]game.MazeTileType `json:"maze"`
 		Claims       [][]game.ClaimType    `json:"claims"`
 		sync.RWMutex `json:"-"`
@@ -432,6 +432,8 @@ func (s *Server) playerStatus() http.HandlerFunc {
 		resp := &PlayerStatusResponse{
 			Name:   p.Name,
 			ID:     p.ID,
+			Pos:    p.Pos,
+			Team:   p.Team,
 			Maze:   maze,
 			Claims: claims,
 		}
