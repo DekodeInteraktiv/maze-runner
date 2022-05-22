@@ -11,6 +11,7 @@ import (
 func (s *Server) routes() {
 	// Add Routes
 	s.Router.Get("/", s.webIndex())
+	s.Router.Get("/docs", s.webDocs())
 	s.Router.Get("/favicon.ico", s.webFavicon())
 
 	// Viewer App
