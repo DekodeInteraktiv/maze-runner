@@ -14,8 +14,8 @@ func (s *Server) routes() {
 	s.Router.Get("/favicon.ico", s.webFavicon())
 
 	// Viewer App
+	viewerCreds := map[string]string{"viewer": "d3kode"}
 	s.Router.Group(func(r chi.Router) {
-		viewerCreds := map[string]string{"viewer": "d3kode"}
 		r.Use(middleware.BasicAuth("viewer", viewerCreds))
 		r.Get("/viewer", s.viewerIndex())
 		r.Get("/viewer/", s.viewerIndex())
