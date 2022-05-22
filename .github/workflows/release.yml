@@ -1,0 +1,80 @@
+# Push a newly tagged version to the live site.
+name: Publish release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+jobs:
+  build:
+    name: Build and publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Setup Go
+       - uses: actions/setup-go@v3
+        with:
+          go-version: '~1.18.2'
+
+      - name: Viewer App
+        run: cd web/viewer
+
+      - name: Viewer Install
+        run: npm ci
+
+      - name: Viewer Build
+        run: npm run build
+
+      - name: Controller App
+        run: cd ../controller
+
+      - name: Controller Install
+        run: npm ci
+
+      - name: Controller Build
+        run: npm run build
+
+      - name: Build Go Binary
+        run: cd ../ && go build ./... - 
+
+      - name: Stop Maze Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOSTNAME }}
+          username: ${{ secrets.DEPLOY_USERNAME }}
+          port: 22
+          script: systemctl stop maze
+
+      - name: Push to server
+        working-directory: ./
+        run: |
+          echo "::group::Setup Auth Keys"
+          mkdir ~/.ssh
+          echo "${{ secrets.DEPLOY_PRIVATE_KEY }}" >> ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "::endgroup::"
+          
+          echo "::group::Pre-approve rsync destination"
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOSTNAME }} > ~/.ssh/known_hosts
+          echo "::endgroup::"
+
+          echo "::group::SCP file"
+          scp ./maze-game-server ${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_HOSTNAME }}:${{ secrets.DEPLOY_PATH }}
+          echo "::endgroup::"
+
+      - name: Start Maze Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOSTNAME }}
+          username: ${{ secrets.DEPLOY_USERNAME }}
+          port: 22
+          script: systemctl stop maze
