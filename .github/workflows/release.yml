@@ -27,25 +27,13 @@ jobs:
           go-version: '~1.18.2'
 
       - name: Viewer App
-        run: cd web/viewer
-
-      - name: Viewer Install
-        run: npm install
-
-      - name: Viewer Build
-        run: npm run build
+        run: cd web/viewer && npm ci && npm run build
 
       - name: Controller App
-        run: cd ../controller
-
-      - name: Controller Install
-        run: npm install
-
-      - name: Controller Build
-        run: npm run build
+        run: cd web/controller && npm ci && npm run build
 
       - name: Build Go Binary
-        run: cd ../ && go build ./...
+        run: go build -o ./build ./...
 
       - name: Stop Maze Server
         uses: appleboy/ssh-action@master
@@ -69,7 +57,7 @@ jobs:
           echo "::endgroup::"
 
           echo "::group::SCP file"
-          scp ./maze-game-server ${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_HOSTNAME }}:${{ secrets.DEPLOY_PATH }}
+          scp ./build/maze-game-server ${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_HOSTNAME }}:${{ secrets.DEPLOY_PATH }}
           echo "::endgroup::"
 
       - name: Start Maze Server
