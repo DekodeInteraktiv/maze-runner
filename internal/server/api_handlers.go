@@ -350,170 +350,65 @@ func (s *Server) playerMove() http.HandlerFunc {
 	}
 }
 
-/*
-{
-    "id": 2,
-    "password": "distracted",
-    "token": "7db66e97a5b64aaba34cd1fcdc79c0f5",
-    "active": false,
-    "timer": 0,
-    "players": null
-}
+// playerStatus gives the status of a player.
+func (s *Server) playerStatus() http.HandlerFunc {
+	type PlayerStatusResponse struct {
+		Name         string
+		ID           int
+		Sprite       []byte
+		Color        string
+		Pos          *game.Point
+		Maze         [][]game.MazeTileType `json:"maze"`
+		Claims       [][]game.ClaimType    `json:"claims"`
+		sync.RWMutex `json:"-"`
+	}
 
-{
-    "Player": {
-        "Name": "Cath",
-        "ID": 1,
-        "Sprite": null,
-        "Color": "#eeeeee",
-        "Pos": {
-            "X": 0,
-            "Y": 0
-        },
-        "Token": "58eefe57ee7f424f92c2cf69dd76e8d7"
-    }
-}
-
-*/
-
-// game token: 6cb936ddd08d4c53aed39fb8e1b940f2
-// player token:
-
-// register ...
-/*func (s *Server) register() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		name := chi.URLParam(r, "name")
+		// Get the game ID and search for the game.
+		gameIDStr := chi.URLParam(r, "gameID")
 
-		ctx := r.Context()
-		token, _ := ctx.Value("Token").(string)
-
-		fmt.Println("Token: " + token)
-
-		if name == "" {
-			data := error{
-				Err: "Name is required",
+		gameID, err := strconv.Atoi(gameIDStr)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Invalid Game ID.",
 			}
 
-			writeJSON(w, data, 404)
+			writeJSON(w, data, http.StatusNotFound)
 			return
 		}
 
-		s.Game.RegisterPlayer(name)
+		g := s.GetGameByID(gameID)
 
-		data := struct {
-			Message string
-			ID      string
-		}{
-			"Hello " + name + ", you are successfully registered.",
-			"193473464793",
-		}
+		// Get Auth Token.
+		ctx := r.Context()
+		token := ctx.Value("Token").(string)
 
-		writeJSON(w, data, 200)
-	}
-}*/
-
-// playerMove ...
-/*func (s *Server) playerMove() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		name := chi.URLParam(r, "direction")
-
-		if name == "" {
-			data := error{
-				Err: "Name is required",
+		// Get the player by auth token.
+		p, err := g.GetPlayerByToken(token)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Authentication token does not match any player registered for this game.",
 			}
 
-			writeJSON(w, data, 404)
+			writeJSON(w, data, http.StatusForbidden)
 			return
 		}
 
-		s.Game.Lock()
+		//maze := ""
+		//claims := ""
 
-		ctx := r.Context()
-		token, _ := ctx.Value("Token").(string)
-
-		p, err := s.Game.GetPlayerByToken(token)
-		if err != nil {
-
+		resp := &PlayerStatusResponse{
+			Name: p.Name,
+			ID:   p.ID,
 		}
 
-		s.Game.Unlock()
-
-		data := struct {
-			Message string
-			ID      string
-		}{
-			"Hello " + p.Name + ", you have successfully moved.",
-			"193473464793",
-		}
-
-		writeJSON(w, data, 200)
-	}
-}*/
-
-// getPlayer ...
-/*func (s *Server) getPlayer() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
-		token, _ := ctx.Value("Token").(string)
-
-		fmt.Println("Token: " + token)
-
-		p, err := s.Game.GetPlayerByToken(token)
-		if err != nil {
-
-		}
-
-		data := struct {
-			Player *game.Player
-		}{
-			p,
-		}
-
-		writeJSON(w, data, 200)
-	}
-}*/
-
-// apiExample ...
-func (s *Server) apiExample() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		name := chi.URLParam(r, "name")
-
-		if name == "" {
-			data := error{
-				Err: "Name is required",
-			}
-
-			writeJSON(w, data, 404)
-			return
-		}
-
-		data := struct {
-			Message string
-			ID      string
-		}{
-			"Hello " + name + ", you are successfully registered.",
-			"193473464793",
-		}
-
-		writeJSON(w, data, 200)
+		writeJSON(w, resp, 200)
 	}
 }
-
-// apiExample ...
-/*func (s *Server) imageExample() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "image/jpeg")
-		img := s.Game.GetImage()
-
-		buf := new(bytes.Buffer)
-		err := jpeg.Encode(buf, img, nil)
-		if err != nil {
-			log.Panicf("Failed to encode image: %v\n", err)
-		}
-
-		w.Write(buf.Bytes())
-	}
-}*/
 
 func writeJSON(w http.ResponseWriter, data interface{}, status int) {
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
