@@ -16,7 +16,7 @@ type Config struct {
 // New creates a new Config from flags and environment variables
 func New(version, commit, date string) *Config {
 	c := &Config{
-		Name:    "Maze Game",
+		Name:    "Mazerunner",
 		Version: version,
 		Commit:  commit,
 		Date:    date,
