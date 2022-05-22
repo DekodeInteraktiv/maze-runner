@@ -71,4 +71,4 @@ jobs:
           username: ${{ secrets.DEPLOY_USERNAME }}
           key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
           port: 22
-          script: systemctl stop maze
+          script: systemctl start maze
