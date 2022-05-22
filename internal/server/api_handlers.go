@@ -398,29 +398,42 @@ func (s *Server) playerStatus() http.HandlerFunc {
 			return
 		}
 
-		var maze [][]game.MazeTileType
-		maze[p.Pos.X][p.Pos.Y] = g.Maze[p.Pos.X][p.Pos.Y]
+		// Player viewport size.
+		size := 5
 
-		if (p.Pos.X - 1) > 0 {
-			maze[p.Pos.X-1][p.Pos.Y] = g.Maze[p.Pos.X-1][p.Pos.Y]
+		// Find local maze.
+		maze := make([][]game.MazeTileType, size)
+		for i := range maze {
+			maze[i] = make([]game.MazeTileType, size)
 		}
 
-		if (p.Pos.X - 2) > 0 {
-			maze[p.Pos.X-2][p.Pos.Y] = g.Maze[p.Pos.X-2][p.Pos.Y]
+		for x := (p.Pos.X - 2); x < (p.Pos.X + 2); x++ {
+			for y := (p.Pos.Y - 2); y < (p.Pos.Y + 2); y++ {
+				if x >= 0 && x < (g.Size-1) && y >= 0 && y < (g.Size-1) {
+					maze[x][y] = g.Maze[x][y]
+				}
+			}
 		}
 
-		if (p.Pos.X + 1) > 0 {
-			maze[p.Pos.X-1][p.Pos.Y] = g.Maze[p.Pos.X-1][p.Pos.Y]
+		// Find local claims.
+		claims := make([][]game.ClaimType, size)
+		for i := range claims {
+			claims[i] = make([]game.ClaimType, size)
 		}
 
-		if (p.Pos.X + 2) > 0 {
-			maze[p.Pos.X+2][p.Pos.Y] = g.Maze[p.Pos.X+2][p.Pos.Y]
+		for x := (p.Pos.X - 2); x < (p.Pos.X + 2); x++ {
+			for y := (p.Pos.Y - 2); y < (p.Pos.Y + 2); y++ {
+				if x >= 0 && x < (g.Size-1) && y >= 0 && y < (g.Size-1) {
+					claims[x][y] = g.Claims[x][y]
+				}
+			}
 		}
 
 		resp := &PlayerStatusResponse{
-			Name: p.Name,
-			ID:   p.ID,
-			Maze: maze,
+			Name:   p.Name,
+			ID:     p.ID,
+			Maze:   maze,
+			Claims: claims,
 		}
 
 		writeJSON(w, resp, 200)
