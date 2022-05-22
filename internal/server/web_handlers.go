@@ -74,11 +74,10 @@ func (s *Server) webIndex() http.HandlerFunc {
 		w.Header().Set("Content-Type", "text/html")
 		w.Header().Set("Vary", "Accept-Encoding")
 
-		message := `Welcome to the ` + s.Config.Name + `...
-		
-		Version: ` + s.Config.Version + `\n
-		Commit:  ` + s.Config.Commit + `\n
-		Date:    ` + s.Config.Date + `\n`
+		message := "Welcome to the " + s.Config.Name + "\n" +
+			"Version: " + s.Config.Version + "\n" +
+			"Commit:  " + s.Config.Commit + "\n" +
+			"Date:    " + s.Config.Date + "\n"
 
 		w.Write([]byte(message))
 	}
