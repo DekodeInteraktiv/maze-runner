@@ -74,7 +74,13 @@ func (s *Server) webIndex() http.HandlerFunc {
 		w.Header().Set("Content-Type", "text/html")
 		w.Header().Set("Vary", "Accept-Encoding")
 
-		w.Write([]byte("Welcome to the Maze Game..."))
+		message := `Welcome to the ` + s.Config.Name + `...
+		
+		Version: ` + s.Config.Version + `
+		Commit:  ` + s.Config.Commit + `
+		Date:    ` + s.Config.Date
+
+		w.Write([]byte(message))
 	}
 }
 
