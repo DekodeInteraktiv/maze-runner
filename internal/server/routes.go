@@ -5,6 +5,7 @@ import (
 
 	"github.com/PeterBooker/maze-game-server/internal/assets"
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 )
 
 func (s *Server) routes() {
@@ -12,12 +13,17 @@ func (s *Server) routes() {
 	s.Router.Get("/", s.webIndex())
 	s.Router.Get("/favicon.ico", s.webFavicon())
 
+	creds := map[string]string{"username": "admin", "password": "admin"}
+
 	// Viewer
-	s.Router.Get("/viewer", s.viewerIndex())
-	s.Router.Get("/viewer/", s.viewerIndex())
-	s.Router.Get("/viewer/{id}", s.viewerIndex())
-	s.Router.Get("/viewer/favicon.ico", s.viewerFavicon())
-	s.Router.Handle("/viewer/static/*", http.FileServer(http.FS(assets.Content)))
+	s.Router.Group(func(r chi.Router) {
+		r.Use(middleware.BasicAuth("viewer", creds))
+		r.Get("/viewer", s.viewerIndex())
+		r.Get("/viewer/", s.viewerIndex())
+		r.Get("/viewer/{id}", s.viewerIndex())
+		r.Get("/viewer/favicon.ico", s.viewerFavicon())
+		r.Handle("/viewer/static/*", http.FileServer(http.FS(assets.Content)))
+	})
 
 	// Controller
 	s.Router.Get("/controller", s.controllerIndex())
@@ -46,6 +52,7 @@ func (s *Server) apiRoutes() chi.Router {
 				r.Post("/register/{password}", s.playerCreate())
 
 				r.Post("/move", s.playerMove())
+				r.Post("/status", s.playerStatus())
 			})
 		})
 	})
