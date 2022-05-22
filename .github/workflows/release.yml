@@ -36,7 +36,7 @@ jobs:
         run: cd web/controller && npm ci && npm run build && cp -r ./build ../../internal/assets/controller/
 
       - name: Build Go Binary
-        run: go build -o ./build ./...
+        run: go build -ldflags="-s -w -X main.version=$(git describe --tags --abbrev=0) -X main.commit=$(git rev-parse --verify HEAD) -X main.date=$(date +'%Y/%m/%d')" -o ./build ./...
 
       - name: Stop Maze Server
         uses: appleboy/ssh-action@master
