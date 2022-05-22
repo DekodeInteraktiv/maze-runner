@@ -398,12 +398,29 @@ func (s *Server) playerStatus() http.HandlerFunc {
 			return
 		}
 
-		//maze := ""
-		//claims := ""
+		var maze [][]game.MazeTileType
+		maze[p.Pos.X][p.Pos.Y] = g.Maze[p.Pos.X][p.Pos.Y]
+
+		if (p.Pos.X - 1) > 0 {
+			maze[p.Pos.X-1][p.Pos.Y] = g.Maze[p.Pos.X-1][p.Pos.Y]
+		}
+
+		if (p.Pos.X - 2) > 0 {
+			maze[p.Pos.X-2][p.Pos.Y] = g.Maze[p.Pos.X-2][p.Pos.Y]
+		}
+
+		if (p.Pos.X + 1) > 0 {
+			maze[p.Pos.X-1][p.Pos.Y] = g.Maze[p.Pos.X-1][p.Pos.Y]
+		}
+
+		if (p.Pos.X + 2) > 0 {
+			maze[p.Pos.X+2][p.Pos.Y] = g.Maze[p.Pos.X+2][p.Pos.Y]
+		}
 
 		resp := &PlayerStatusResponse{
 			Name: p.Name,
 			ID:   p.ID,
+			Maze: maze,
 		}
 
 		writeJSON(w, resp, 200)
