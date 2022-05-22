@@ -7,6 +7,9 @@ on:
     tags:
       - '*'
 
+env:
+  CI: ""
+
 jobs:
   build:
     name: Build and publish
