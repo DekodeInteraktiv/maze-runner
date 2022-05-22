@@ -30,7 +30,7 @@ jobs:
         run: cd web/viewer
 
       - name: Viewer Install
-        run: npm ci
+        run: npm install
 
       - name: Viewer Build
         run: npm run build
@@ -39,7 +39,7 @@ jobs:
         run: cd ../controller
 
       - name: Controller Install
-        run: npm ci
+        run: npm install
 
       - name: Controller Build
         run: npm run build
