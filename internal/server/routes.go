@@ -13,11 +13,10 @@ func (s *Server) routes() {
 	s.Router.Get("/", s.webIndex())
 	s.Router.Get("/favicon.ico", s.webFavicon())
 
-	creds := map[string]string{"username": "admin", "password": "admin"}
-
-	// Viewer
+	// Viewer App
 	s.Router.Group(func(r chi.Router) {
-		r.Use(middleware.BasicAuth("viewer", creds))
+		viewerCreds := map[string]string{"viewer": "d3kode"}
+		r.Use(middleware.BasicAuth("viewer", viewerCreds))
 		r.Get("/viewer", s.viewerIndex())
 		r.Get("/viewer/", s.viewerIndex())
 		r.Get("/viewer/{id}", s.viewerIndex())
@@ -25,11 +24,15 @@ func (s *Server) routes() {
 		r.Handle("/viewer/static/*", http.FileServer(http.FS(assets.Content)))
 	})
 
-	// Controller
-	s.Router.Get("/controller", s.controllerIndex())
-	s.Router.Get("/controller/", s.controllerIndex())
-	s.Router.Get("/controller/favicon.ico", s.controllerFavicon())
-	s.Router.Handle("/controller/static/*", http.FileServer(http.FS(assets.Content)))
+	// Controller App
+	controllerCreds := map[string]string{"controller": "happyhour"}
+	s.Router.Group(func(r chi.Router) {
+		r.Use(middleware.BasicAuth("controller", controllerCreds))
+		r.Get("/controller", s.controllerIndex())
+		r.Get("/controller/", s.controllerIndex())
+		r.Get("/controller/favicon.ico", s.controllerFavicon())
+		r.Handle("/controller/static/*", http.FileServer(http.FS(assets.Content)))
+	})
 
 	// Add API v1 routes
 	s.Router.Mount("/api/v1", s.apiRoutes())
