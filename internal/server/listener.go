@@ -1,12 +1,10 @@
 package server
 
 import (
-	"net/http"
-	"time"
-
 	"github.com/caddyserver/certmagic"
 )
 
+/*
 func (s *Server) startHTTP() {
 	http := &http.Server{
 		ReadTimeout:  5 * time.Second,
@@ -18,6 +16,7 @@ func (s *Server) startHTTP() {
 
 	go func() { s.Logger.Fatal(http.ListenAndServe()) }()
 }
+*/
 
 func (s *Server) startHTTPS() {
 	go func() { s.Logger.Fatal(certmagic.HTTPS([]string{"maze.peterbooker.com"}, s.Router)) }()
