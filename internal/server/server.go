@@ -93,5 +93,9 @@ func (s *Server) Setup() {
 
 	s.routes()
 
-	s.startHTTPS()
+	if s.Config.Env == "local" {
+		s.startHTTP()
+	} else {
+		s.startHTTPS()
+	}
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"math/rand"
 	"os"
@@ -23,11 +24,15 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 
+	// Flags
+	local := flag.Bool("local", false, "boolean")
+	flag.Parse()
+
 	// Create Logger
 	l := log.New()
 
 	// Create Config
-	c := config.New(version, commit, date)
+	c := config.New(version, commit, date, *local)
 
 	// Create Server
 	s := server.New(l, c)
