@@ -1,5 +1,5 @@
 import Object from './Object';
-import blipSrc from '../audio/blip1.wav';
+import SoundBoard from './SoundBoard';
 
 function objectValues(obj) {
     let vals = [];
@@ -40,7 +40,7 @@ const Maze = ({maze, countDown, players, claims}) => {
     <div className={`map ${countDown ? 'countdown' : ''}`}>
     {(0 !== countDown) &&
       <div className="countdown" key={'countdown-' + countDown}>
-      <audio src={blipSrc} autoPlay />
+      <SoundBoard.Blip1 />
       <span>{(countDown === 1) ? 'Go!' : countDown - 1}</span>
       </div>
     }
