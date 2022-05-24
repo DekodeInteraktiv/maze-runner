@@ -81,15 +81,7 @@ func (s *Server) Setup() {
 
 	s.Router.Use(cors.Handler(cors.Options{
 		AllowOriginFunc: func(r *http.Request, origin string) bool {
-			if origin == "https://maze.peterbooker.com" {
-				return true
-			}
-
-			if r.Header.Get("Dekode") != "" {
-				return true
-			}
-
-			return false
+			return true
 		},
 		//AllowedOrigins:   []string{"https://maze.peterbooker.com"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
