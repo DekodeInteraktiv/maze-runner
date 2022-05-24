@@ -37,11 +37,7 @@ const Music = ({game, active, musicRef}) => {
 function App() {
   const [countDown, setCountDown] = useState(0);
   const [gameState, setGameState] = useState({});
-  const [music, setMusic] = useState(false);
   const musicRef = useRef(null);
-  const blip1Sound = useRef(null);
-  const blip2Sound = useRef(null);
-  const selectSound = useRef(null);
 
   let updateGameStateInterval;
   let navigate = useNavigate();
@@ -50,10 +46,7 @@ function App() {
   useEffect(() => {
     if(countDown > 0) {
       if(1 === countDown) {
-        //blip2Sound.current.play();
         musicRef.current.play();
-      } else {
-        //blip1Sound.current.play();
       }
       setTimeout(() => {
         setCountDown(countDown - 1);
