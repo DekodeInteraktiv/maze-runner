@@ -59,7 +59,8 @@ func (s *Server) apiRoutes() chi.Router {
 		r.Post("/create", s.gameCreate())
 
 		r.Route("/{gameID}", func(r chi.Router) {
-			r.Get("/info", s.gameInfo())
+			r.Get("/info", s.gameStatus())
+			r.Get("/status", s.gameStatus())
 			r.Get("/start", s.gameStart())
 
 			r.Route("/player", func(r chi.Router) {
@@ -67,6 +68,8 @@ func (s *Server) apiRoutes() chi.Router {
 
 				r.Post("/move", s.playerMove())
 				r.Get("/status", s.playerStatus())
+
+				r.Post("/ability/bomb", s.playerAbilityBomb())
 			})
 		})
 	})

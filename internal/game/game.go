@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"math/rand"
 	"strings"
 	"sync"
@@ -23,6 +24,7 @@ var (
 	playerID = incrementer{
 		id: 1,
 	}
+	Directions = []string{"north", "south", "west", "east"}
 )
 
 type Game struct {
@@ -32,6 +34,7 @@ type Game struct {
 	Status       string           `json:"status"`
 	Timer        uint             `json:"timer"`
 	TimeLimit    uint             `json:"time_limit"`
+	Active       chan bool        `json:"-"`
 	Players      []*Player        `json:"players"`
 	Size         int              `json:"size"`
 	Maze         [][]MazeTileType `json:"maze"`
@@ -98,6 +101,7 @@ func New(size int, distribution float64, timelimit uint) *Game {
 		Password:  generatePassword(),
 		Token:     strings.Replace(uuid.New().String(), "-", "", -1),
 		TimeLimit: timelimit,
+		Active:    make(chan bool),
 		Status:    GameOpen,
 		Size:      size,
 		Maze:      grid,
@@ -111,6 +115,7 @@ func (g *Game) Start() {
 	duration := time.Duration(5) * time.Second
 	time.AfterFunc(duration, g.setActive)
 	time.AfterFunc(duration, g.runGame)
+	time.AfterFunc(duration, g.runMovement)
 }
 
 // start starts the game.
@@ -123,12 +128,11 @@ func (g *Game) setActive() {
 // runGame runs the game timer.
 func (g *Game) runGame() {
 	ticker := time.NewTicker(1 * time.Second)
-	done := make(chan bool)
 
 	go func(g *Game) {
 		for {
 			select {
-			case <-done:
+			case <-g.Active:
 				return
 			case <-ticker.C:
 				g.Lock()
@@ -141,7 +145,68 @@ func (g *Game) runGame() {
 					g.Status = GameFinished
 					g.Unlock()
 
-					done <- true
+					g.Active <- true
+				}
+			}
+		}
+	}(g)
+}
+
+// runMovement runs the player movement action.
+func (g *Game) runMovement() {
+	ticker := time.NewTicker(1000 * time.Millisecond)
+
+	go func(g *Game) {
+		for {
+			select {
+			case <-g.Active:
+				ticker.Stop()
+				return
+			case <-ticker.C:
+				fmt.Println("Processing Player Movement")
+				for _, p := range g.Players {
+					if p != nil {
+						// Skip if no move queued.
+						if p.NextMove == "" {
+							continue
+						}
+
+						p.Lock()
+						direction := p.NextMove
+						p.NextMove = ""
+
+						// Calculate the new position.
+						var newPos Point
+
+						switch direction {
+						case "north":
+							newPos = p.Pos.North()
+						case "south":
+							newPos = p.Pos.South()
+						case "west":
+							newPos = p.Pos.West()
+						case "east":
+							newPos = p.Pos.East()
+						}
+						p.Unlock()
+
+						g.RLock()
+						// Check if the player is trying to move outside the maze.
+						if newPos.X < 0 || newPos.X > (g.Size-1) || newPos.Y < 0 || newPos.Y > (g.Size-1) {
+							g.RUnlock()
+							continue
+						}
+
+						// Check if the player is trying to move into a wall.
+						if g.Maze[newPos.X][newPos.Y] == Wall {
+							g.RUnlock()
+							continue
+						}
+						g.RUnlock()
+
+						// Move player.
+						g.MovePlayer(p, newPos)
+					}
 				}
 			}
 		}
@@ -172,12 +237,13 @@ func (g *Game) RegisterPlayer(name, color string) *Player {
 	}
 
 	p := &Player{
-		ID:    playerID.new(),
-		Name:  name,
-		Color: color,
-		Team:  team,
-		Token: strings.Replace(uuid.New().String(), "-", "", -1),
-		Pos:   pos,
+		ID:       playerID.new(),
+		Name:     name,
+		Color:    color,
+		Team:     team,
+		Token:    strings.Replace(uuid.New().String(), "-", "", -1),
+		Pos:      pos,
+		NextMove: "",
 	}
 
 	g.Players = append(g.Players, p)
@@ -186,17 +252,17 @@ func (g *Game) RegisterPlayer(name, color string) *Player {
 }
 
 // GetPlayerByToken finds a player by their token.
-func (g *Game) GetPlayerByToken(token string) (*Player, error) {
+func (g *Game) GetPlayerByToken(token string) *Player {
 	g.Lock()
 	defer g.Unlock()
 
 	for _, p := range g.Players {
 		if p.Token == token {
-			return p, nil
+			return p
 		}
 	}
 
-	return nil, nil
+	return nil
 }
 
 func (g *Game) MovePlayer(p *Player, newPos Point) {

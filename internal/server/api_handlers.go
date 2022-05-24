@@ -10,6 +10,7 @@ import (
 
 	"github.com/PeterBooker/maze-game-server/internal/game"
 	"github.com/go-chi/chi"
+	"golang.org/x/exp/slices"
 )
 
 // error holds data about an error
@@ -32,6 +33,7 @@ func (s *Server) gameCreate() http.HandlerFunc {
 		Status       string                `json:"status"`
 		Timer        uint                  `json:"timer"`
 		TimeLimit    uint                  `json:"time_limit"`
+		Active       chan bool             `json:"-"`
 		Players      []*game.Player        `json:"players"`
 		Size         int                   `json:"size"`
 		Maze         [][]game.MazeTileType `json:"maze"`
@@ -75,8 +77,8 @@ func (s *Server) gameCreate() http.HandlerFunc {
 	}
 }
 
-// gameInfo gets info for a specific game.
-func (s *Server) gameInfo() http.HandlerFunc {
+// gameStatus gets the status for a specific game.
+func (s *Server) gameStatus() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		idStr := chi.URLParam(r, "gameID")
 
@@ -218,8 +220,8 @@ func (s *Server) playerCreate() http.HandlerFunc {
 	}
 }
 
-// playerMove moves a player.
-func (s *Server) playerMove() http.HandlerFunc {
+// playerMoveOld moves a player.
+func (s *Server) playerMoveOld() http.HandlerFunc {
 	type Payload struct {
 		Direction string `json:"direction"`
 		Distance  int    `json:"distance"`
@@ -261,8 +263,8 @@ func (s *Server) playerMove() http.HandlerFunc {
 		token := ctx.Value("Token").(string)
 
 		// Get the player by auth token.
-		p, err := g.GetPlayerByToken(token)
-		if err != nil {
+		p := g.GetPlayerByToken(token)
+		if p == nil {
 			data := struct {
 				Error string
 			}{
@@ -350,6 +352,165 @@ func (s *Server) playerMove() http.HandlerFunc {
 	}
 }
 
+// playerMove queues a player move.
+func (s *Server) playerMove() http.HandlerFunc {
+	type Payload struct {
+		Direction string `json:"direction"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Get the JSON encoded body data.
+		var payload Payload
+		err := json.NewDecoder(r.Body).Decode(&payload)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Invalid POST data.",
+			}
+			writeJSON(w, data, http.StatusBadRequest)
+			return
+		}
+
+		// Get the game ID and search for the game.
+		gameIDStr := chi.URLParam(r, "gameID")
+
+		gameID, err := strconv.Atoi(gameIDStr)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Invalid Game ID.",
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
+
+		g := s.GetGameByID(gameID)
+
+		// Get Auth Token.
+		ctx := r.Context()
+		token := ctx.Value("Token").(string)
+
+		// Get the player by auth token.
+		p := g.GetPlayerByToken(token)
+		if p == nil {
+			data := struct {
+				Error string
+			}{
+				"Authentication token does not match any player registered for this game.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
+			return
+		}
+
+		// Check game is running.
+		if g.Status != game.GameRunning {
+			data := struct {
+				Error string
+			}{
+				"The game is not running.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
+			return
+		}
+
+		// Check if direction is valid.
+		if !slices.Contains(game.Directions, payload.Direction) {
+			data := struct {
+				Error string
+			}{
+				"Invalid direction.",
+			}
+
+			writeJSON(w, data, http.StatusBadRequest)
+			return
+		}
+
+		p.Lock()
+		p.NextMove = payload.Direction
+		p.Unlock()
+
+		data := struct {
+			Message string
+		}{
+			"Successfully queued next move.",
+		}
+
+		writeJSON(w, data, 200)
+	}
+}
+
+// playerAbilityBomb uses the bomb ability.
+func (s *Server) playerAbilityBomb() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Get the game ID and search for the game.
+		gameIDStr := chi.URLParam(r, "gameID")
+
+		gameID, err := strconv.Atoi(gameIDStr)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Invalid Game ID.",
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
+
+		g := s.GetGameByID(gameID)
+
+		// Get Auth Token.
+		ctx := r.Context()
+		token := ctx.Value("Token").(string)
+
+		// Get the player by auth token.
+		p := g.GetPlayerByToken(token)
+		if p == nil {
+			data := struct {
+				Error string
+			}{
+				"Authentication token does not match any player registered for this game.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
+			return
+		}
+
+		// Check game is active.
+		if g.Status == game.GameRunning {
+			data := struct {
+				Error string
+			}{
+				"The game is not active.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
+			return
+		}
+
+		for x := (p.Pos.X - 2); x < (p.Pos.X + 2); x++ {
+			for y := (p.Pos.Y - 2); y < (p.Pos.Y + 2); y++ {
+				if x >= 0 && x < (g.Size-1) && y >= 0 && y < (g.Size-1) {
+					g.Claims[x][y] = p.Team
+				}
+			}
+		}
+
+		data := struct {
+			Message string
+		}{
+			"Successfully bombed area.",
+		}
+
+		writeJSON(w, data, 200)
+	}
+}
+
 // playerStatus gives the status of a player.
 func (s *Server) playerStatus() http.HandlerFunc {
 	type PlayerStatusResponse struct {
@@ -386,8 +547,8 @@ func (s *Server) playerStatus() http.HandlerFunc {
 		token := ctx.Value("Token").(string)
 
 		// Get the player by auth token.
-		p, err := g.GetPlayerByToken(token)
-		if err != nil {
+		p := g.GetPlayerByToken(token)
+		if p == nil {
 			data := struct {
 				Error string
 			}{

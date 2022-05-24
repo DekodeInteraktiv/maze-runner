@@ -5,13 +5,14 @@ import (
 )
 
 type Player struct {
-	Name   string
-	ID     int
-	Sprite []byte
-	Color  string
-	Pos    *Point
-	Token  string
-	Team   ClaimType
+	Name     string    `json:"name"`
+	ID       int       `json:"id"`
+	Sprite   []byte    `json:"-"`
+	Color    string    `json:"color"`
+	Pos      *Point    `json:"pos"`
+	Token    string    `json:"token"`
+	Team     ClaimType `json:"team"`
+	NextMove string    `json:"-"`
 	sync.RWMutex
 }
 
