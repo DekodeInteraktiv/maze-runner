@@ -18,7 +18,7 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "/viewer",
+  "start_url": "https://maze.peterbooker.com/viewer",
   "display": "standalone",
   "theme_color": "#30b468",
   "background_color": "#282c34"

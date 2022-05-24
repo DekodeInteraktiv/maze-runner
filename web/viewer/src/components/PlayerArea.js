@@ -1,3 +1,5 @@
+import SoundBoard from './SoundBoard';
+
 const PlayerArea = ({id, players, password, claims}) => {
   if(!players || !players[id-1]) {
     return(
@@ -19,6 +21,7 @@ const PlayerArea = ({id, players, password, claims}) => {
 
   return(
     <div key={`player-${id}`} className={`player-area player-area-${id}`}>
+      <SoundBoard.Select />
       <span className="name">{player.Name}</span>
       <span className="score">Score: {score}</span>
     </div>

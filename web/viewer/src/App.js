@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   useParams,
   useNavigate,
@@ -9,20 +9,52 @@ import PlayerArea from './components/PlayerArea';
 import Timer from './components/Timer';
 import logo from './logo.png';
 import './App.css';
+import menuAudio from './audio/menu.wav';
+import gameAudio from './audio/game.wav';
+import SoundBoard from './components/SoundBoard';
 const api = 'https://maze.peterbooker.com/api/v1/game/';
 const roundTime = 120;
 const size = 16;
 
+const Music = ({game, active, musicRef}) => {
+  let music;
+  if(!game) {
+    return null;
+  }
+  if(active) {
+    music = gameAudio;
+  } else {
+    music = menuAudio;
+  }
+  if(musicRef.current) {
+    musicRef.current.volume = 0.2;
+  }
+  return (
+    <audio ref={musicRef} src={music} autoPlay loop />
+  );
+}
 
 function App() {
   const [countDown, setCountDown] = useState(0);
   const [gameState, setGameState] = useState({});
+  const [music, setMusic] = useState(false);
+  const musicRef = useRef(null);
+  const blip1Sound = useRef(null);
+  const blip2Sound = useRef(null);
+  const selectSound = useRef(null);
+
   let updateGameStateInterval;
   let navigate = useNavigate();
   let params = useParams();
   const {game} = params;
   useEffect(() => {
     if(countDown > 0) {
+      if(1 === countDown) {
+        //blip2Sound.current.play();
+        musicRef.current.play();
+      } else {
+        //blip1Sound.current.play();
+      }
       setTimeout(() => {
         setCountDown(countDown - 1);
       }, 1000);
@@ -30,6 +62,7 @@ function App() {
   },[countDown]);
 
   const startRound = () => {
+    musicRef.current.pause();
     fetch(api + `${game}/start`, {
       method: 'GET',
     })
@@ -62,7 +95,6 @@ function App() {
     })
     .then(response => response.json())
     .then(data => {
-      //console.log(data);
       setGameState(data);
     })
     .catch((error) => {
@@ -72,13 +104,14 @@ function App() {
   useEffect(() => {
     if(game) {
       updateGameState();
-      setInterval(updateGameState, 200);
+      setInterval(updateGameState, 80);
     }
   },[game]);
 
   if(!game) {
     return (
       <div className="App select-screen">
+        <Music game={game} active={gameState.active} musicRef={musicRef} />
         <div className="app-head">
           <div className="branding">
           <img src={logo} alt="" />
@@ -105,9 +138,9 @@ function App() {
   }
 
   let {maze} = gameState;
-
   return (
     <div className="App">
+      <Music game={game} active={gameState.active} musicRef={musicRef} />
       <style>{`body{--map-X: ${size};--map-Y: ${size};}`}</style>
       <div className="app-head">
         <PlayerArea id="3" claims={gameState.claims} players={gameState.players} password={gameState.password} />

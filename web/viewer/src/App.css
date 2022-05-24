@@ -268,10 +268,10 @@ body {
 }
 
 .player-feet {
-	border-left: 12px solid #d8d3c3;
-	border-right: 12px solid #d8d3c3;
+	border-left: 8px solid #d8d3c3;
+	border-right: 8px solid #d8d3c3;
 	width: 42%;
-	height: 8%;
+	height: 12%;
 }
 
 button {
@@ -306,6 +306,7 @@ button:hover {
 .intro-players .player {
 	width: 9vh;
 	height: 9vh;
+	animation: dance 400ms;
 	animation-iteration-count: infinite;
 }
 
