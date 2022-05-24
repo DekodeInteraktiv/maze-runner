@@ -8,6 +8,7 @@ require (
 	github.com/go-chi/cors v1.2.1
 	github.com/google/uuid v1.3.0
 	github.com/ojrac/opensimplex-go v1.0.2
+	github.com/ulule/limiter/v3 v3.10.0
 )
 
 require (
@@ -15,6 +16,7 @@ require (
 	github.com/libdns/libdns v0.2.1 // indirect
 	github.com/mholt/acmez v1.0.2 // indirect
 	github.com/miekg/dns v1.1.49 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	go.uber.org/zap v1.21.0 // indirect
