@@ -55,6 +55,15 @@ func (s *Server) viewerRobots() http.HandlerFunc {
 func (s *Server) viewerManifest() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
+		data, _ := assets.Content.ReadFile("viewer/manifest.json")
+
+		w.Write(data)
+	}
+}
+
+func (s *Server) viewerAssetManifest() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 		data, _ := assets.Content.ReadFile("viewer/asset-manifest.json")
 
 		w.Write(data)
@@ -109,6 +118,15 @@ func (s *Server) controllerRobots() http.HandlerFunc {
 }
 
 func (s *Server) controllerManifest() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		data, _ := assets.Content.ReadFile("controller/manifest.json")
+
+		w.Write(data)
+	}
+}
+
+func (s *Server) controllerAssetManifest() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		data, _ := assets.Content.ReadFile("controller/asset-manifest.json")
