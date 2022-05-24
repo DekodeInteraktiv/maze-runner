@@ -27,8 +27,12 @@ func (s *Server) viewerIndex() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
 		w.Header().Set("Vary", "Accept-Encoding")
-
-		data, _ := assets.Content.ReadFile("viewer/index.html")
+		data, err := assets.Content.ReadFile("viewer/index.html")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("File not found."))
+			return
+		}
 
 		w.Write(data)
 	}
@@ -37,7 +41,12 @@ func (s *Server) viewerIndex() http.HandlerFunc {
 func (s *Server) viewerFavicon() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/x-icon")
-		data, _ := assets.Content.ReadFile("viewer/favicon.ico")
+		data, err := assets.Content.ReadFile("viewer/favicon.ico")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("File not found."))
+			return
+		}
 
 		w.Write(data)
 	}
@@ -46,7 +55,12 @@ func (s *Server) viewerFavicon() http.HandlerFunc {
 func (s *Server) viewerRobots() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
-		data, _ := assets.Content.ReadFile("viewer/robots.txt")
+		data, err := assets.Content.ReadFile("viewer/robots.txt")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("File not found."))
+			return
+		}
 
 		w.Write(data)
 	}
@@ -55,7 +69,12 @@ func (s *Server) viewerRobots() http.HandlerFunc {
 func (s *Server) viewerManifest() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		data, _ := assets.Content.ReadFile("viewer/manifest.json")
+		data, err := assets.Content.ReadFile("viewer/manifest.json")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("File not found."))
+			return
+		}
 
 		w.Write(data)
 	}
@@ -64,7 +83,12 @@ func (s *Server) viewerManifest() http.HandlerFunc {
 func (s *Server) viewerAssetManifest() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		data, _ := assets.Content.ReadFile("viewer/asset-manifest.json")
+		data, err := assets.Content.ReadFile("viewer/asset-manifest.json")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("File not found."))
+			return
+		}
 
 		w.Write(data)
 	}
@@ -73,7 +97,12 @@ func (s *Server) viewerAssetManifest() http.HandlerFunc {
 func (s *Server) viewerLogo192() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/png")
-		data, _ := assets.Content.ReadFile("viewer/logo192.png")
+		data, err := assets.Content.ReadFile("viewer/logo192.png")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("File not found."))
+			return
+		}
 
 		w.Write(data)
 	}
@@ -82,7 +111,12 @@ func (s *Server) viewerLogo192() http.HandlerFunc {
 func (s *Server) viewerLogo512() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/png")
-		data, _ := assets.Content.ReadFile("viewer/logo512.png")
+		data, err := assets.Content.ReadFile("viewer/logo512.png")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("File not found."))
+			return
+		}
 
 		w.Write(data)
 	}
@@ -92,8 +126,12 @@ func (s *Server) controllerIndex() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
 		w.Header().Set("Vary", "Accept-Encoding")
-
-		data, _ := assets.Content.ReadFile("controller/index.html")
+		data, err := assets.Content.ReadFile("controller/index.html")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("File not found."))
+			return
+		}
 
 		w.Write(data)
 	}
@@ -102,7 +140,12 @@ func (s *Server) controllerIndex() http.HandlerFunc {
 func (s *Server) controllerFavicon() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/x-icon")
-		data, _ := assets.Content.ReadFile("controller/favicon.ico")
+		data, err := assets.Content.ReadFile("controller/favicon.ico")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("File not found."))
+			return
+		}
 
 		w.Write(data)
 	}
@@ -111,7 +154,12 @@ func (s *Server) controllerFavicon() http.HandlerFunc {
 func (s *Server) controllerRobots() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
-		data, _ := assets.Content.ReadFile("controller/robots.txt")
+		data, err := assets.Content.ReadFile("controller/robots.txt")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("File not found."))
+			return
+		}
 
 		w.Write(data)
 	}
@@ -120,7 +168,12 @@ func (s *Server) controllerRobots() http.HandlerFunc {
 func (s *Server) controllerManifest() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		data, _ := assets.Content.ReadFile("controller/manifest.json")
+		data, err := assets.Content.ReadFile("controller/manifest.json")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("File not found."))
+			return
+		}
 
 		w.Write(data)
 	}
@@ -129,7 +182,12 @@ func (s *Server) controllerManifest() http.HandlerFunc {
 func (s *Server) controllerAssetManifest() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		data, _ := assets.Content.ReadFile("controller/asset-manifest.json")
+		data, err := assets.Content.ReadFile("controller/asset-manifest.json")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("File not found."))
+			return
+		}
 
 		w.Write(data)
 	}
@@ -138,7 +196,12 @@ func (s *Server) controllerAssetManifest() http.HandlerFunc {
 func (s *Server) controllerLogo192() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/png")
-		data, _ := assets.Content.ReadFile("controller/logo192.png")
+		data, err := assets.Content.ReadFile("controller/logo192.png")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("File not found."))
+			return
+		}
 
 		w.Write(data)
 	}
@@ -147,7 +210,12 @@ func (s *Server) controllerLogo192() http.HandlerFunc {
 func (s *Server) controllerLogo512() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/png")
-		data, _ := assets.Content.ReadFile("controller/logo512.png")
+		data, err := assets.Content.ReadFile("controller/logo512.png")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("File not found."))
+			return
+		}
 
 		w.Write(data)
 	}
@@ -157,7 +225,6 @@ func (s *Server) webIndex() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
 		w.Header().Set("Vary", "Accept-Encoding")
-
 		message := "<p>Welcome to the " + s.Config.Name + "</p>" +
 			"<p>Version: " + s.Config.Version + "</p>" +
 			"<p>Commit:  " + s.Config.Commit + "</p>" +
@@ -170,7 +237,12 @@ func (s *Server) webIndex() http.HandlerFunc {
 func (s *Server) webFavicon() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/x-icon")
-		data, _ := assets.Content.ReadFile("static/favicon.ico")
+		data, err := assets.Content.ReadFile("static/favicon.ico")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("File not found."))
+			return
+		}
 
 		w.Write(data)
 	}
@@ -180,7 +252,6 @@ func (s *Server) webDocs() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
 		w.Header().Set("Vary", "Accept-Encoding")
-
 		message := "<p>Welcome to the docs page</p>"
 
 		w.Write([]byte(message))
