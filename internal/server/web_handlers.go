@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -24,7 +23,6 @@ type Page struct {
 	Time        time.Time
 }
 
-// viewerIndex ...
 func (s *Server) viewerIndex() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
@@ -36,7 +34,6 @@ func (s *Server) viewerIndex() http.HandlerFunc {
 	}
 }
 
-// viewerFavicon ...
 func (s *Server) viewerFavicon() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/x-icon")
@@ -46,7 +43,42 @@ func (s *Server) viewerFavicon() http.HandlerFunc {
 	}
 }
 
-// controllerIndex ...
+func (s *Server) viewerRobots() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		data, _ := assets.Content.ReadFile("viewer/robots.txt")
+
+		w.Write(data)
+	}
+}
+
+func (s *Server) viewerManifest() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		data, _ := assets.Content.ReadFile("viewer/asset-manifest.json")
+
+		w.Write(data)
+	}
+}
+
+func (s *Server) viewerLogo192() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "image/png")
+		data, _ := assets.Content.ReadFile("viewer/logo192.png")
+
+		w.Write(data)
+	}
+}
+
+func (s *Server) viewerLogo512() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "image/png")
+		data, _ := assets.Content.ReadFile("viewer/logo512.png")
+
+		w.Write(data)
+	}
+}
+
 func (s *Server) controllerIndex() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
@@ -58,7 +90,6 @@ func (s *Server) controllerIndex() http.HandlerFunc {
 	}
 }
 
-// controllerFavicon ...
 func (s *Server) controllerFavicon() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/x-icon")
@@ -68,7 +99,42 @@ func (s *Server) controllerFavicon() http.HandlerFunc {
 	}
 }
 
-// webIndex ...
+func (s *Server) controllerRobots() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		data, _ := assets.Content.ReadFile("controller/robots.txt")
+
+		w.Write(data)
+	}
+}
+
+func (s *Server) controllerManifest() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		data, _ := assets.Content.ReadFile("controller/asset-manifest.json")
+
+		w.Write(data)
+	}
+}
+
+func (s *Server) controllerLogo192() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "image/png")
+		data, _ := assets.Content.ReadFile("controller/logo192.png")
+
+		w.Write(data)
+	}
+}
+
+func (s *Server) controllerLogo512() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "image/png")
+		data, _ := assets.Content.ReadFile("controller/logo512.png")
+
+		w.Write(data)
+	}
+}
+
 func (s *Server) webIndex() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
@@ -83,7 +149,6 @@ func (s *Server) webIndex() http.HandlerFunc {
 	}
 }
 
-// webFavicon ...
 func (s *Server) webFavicon() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/x-icon")
@@ -93,36 +158,13 @@ func (s *Server) webFavicon() http.HandlerFunc {
 	}
 }
 
-// webDocs ...
 func (s *Server) webDocs() http.HandlerFunc {
-
-	app := App{
-		Name:    s.Config.Name,
-		Version: s.Config.Version,
-		URL:     "https://maze-game-server.dev",
-	}
-
-	page := Page{
-		Name:        "docs",
-		Title:       "Documentation - Maze Game Server",
-		Description: "Documentation for the Maze Game.",
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
 		w.Header().Set("Vary", "Accept-Encoding")
 
-		page.URLPath = r.URL.Path
-		page.Time = time.Now()
+		message := "<p>Welcome to the docs page</p>"
 
-		meta := struct {
-			Page Page
-			App  App
-		}{
-			page,
-			app,
-		}
-
-		fmt.Println(meta)
+		w.Write([]byte(message))
 	}
 }

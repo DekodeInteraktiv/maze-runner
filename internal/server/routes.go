@@ -22,6 +22,10 @@ func (s *Server) routes() {
 		r.Get("/viewer/", s.viewerIndex())
 		r.Get("/viewer/{id}", s.viewerIndex())
 		r.Get("/viewer/favicon.ico", s.viewerFavicon())
+		r.Get("/viewer/robots.txt", s.viewerRobots())
+		r.Get("/viewer/asset-manifest.json", s.viewerManifest())
+		r.Get("/viewer/logo192.png", s.viewerLogo192())
+		r.Get("/viewer/logo512.png", s.viewerLogo512())
 		r.Handle("/viewer/static/*", http.FileServer(http.FS(assets.Content)))
 	})
 
@@ -32,6 +36,10 @@ func (s *Server) routes() {
 		r.Get("/controller", s.controllerIndex())
 		r.Get("/controller/", s.controllerIndex())
 		r.Get("/controller/favicon.ico", s.controllerFavicon())
+		r.Get("/controller/robots.txt", s.controllerRobots())
+		r.Get("/controller/asset-manifest.json", s.controllerManifest())
+		r.Get("/controller/logo192.png", s.controllerLogo192())
+		r.Get("/controller/logo512.png", s.controllerLogo512())
 		r.Handle("/controller/static/*", http.FileServer(http.FS(assets.Content)))
 	})
 
