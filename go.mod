@@ -1,6 +1,6 @@
 module github.com/PeterBooker/maze-game-server
 
-go 1.17
+go 1.18
 
 require (
 	github.com/caddyserver/certmagic v0.16.1
@@ -9,6 +9,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/ojrac/opensimplex-go v1.0.2
 	github.com/ulule/limiter/v3 v3.10.0
+	golang.org/x/exp v0.0.0-20220518171630-0b5c67f07fdf
 )
 
 require (
