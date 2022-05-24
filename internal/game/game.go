@@ -10,6 +10,12 @@ import (
 	noise "github.com/ojrac/opensimplex-go"
 )
 
+const (
+	GameOpen     = "open"
+	GameRunning  = "running"
+	GameFinished = "finished"
+)
+
 var (
 	gameID = incrementer{
 		id: 1,
@@ -23,7 +29,7 @@ type Game struct {
 	ID           int              `json:"id"`
 	Password     string           `json:"password"`
 	Token        string           `json:"-"`
-	Active       bool             `json:"active"`
+	Status       string           `json:"status"`
 	Timer        uint             `json:"timer"`
 	TimeLimit    uint             `json:"time_limit"`
 	Players      []*Player        `json:"players"`
@@ -92,10 +98,10 @@ func New(size int, distribution float64, timelimit uint) *Game {
 		Password:  generatePassword(),
 		Token:     strings.Replace(uuid.New().String(), "-", "", -1),
 		TimeLimit: timelimit,
+		Status:    GameOpen,
 		Size:      size,
 		Maze:      grid,
 		Claims:    claims,
-		Active:    false,
 	}
 }
 
@@ -110,7 +116,7 @@ func (g *Game) Start() {
 // start starts the game.
 func (g *Game) setActive() {
 	g.Lock()
-	g.Active = true
+	g.Status = GameRunning
 	g.Unlock()
 }
 
@@ -132,7 +138,7 @@ func (g *Game) runGame() {
 					ticker.Stop()
 
 					g.Lock()
-					g.Active = false
+					g.Status = GameFinished
 					g.Unlock()
 
 					done <- true

@@ -29,7 +29,7 @@ func (s *Server) gameCreate() http.HandlerFunc {
 		ID           int                   `json:"id"`
 		Password     string                `json:"password"`
 		Token        string                `json:"token"`
-		Active       bool                  `json:"active"`
+		Status       string                `json:"status"`
 		Timer        uint                  `json:"timer"`
 		TimeLimit    uint                  `json:"time_limit"`
 		Players      []*game.Player        `json:"players"`
@@ -274,7 +274,7 @@ func (s *Server) playerMove() http.HandlerFunc {
 		}
 
 		// Check game is active.
-		if g.Active == false {
+		if g.Status == game.GameRunning {
 			data := struct {
 				Error string
 			}{
