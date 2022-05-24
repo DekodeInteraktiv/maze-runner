@@ -13,6 +13,7 @@ const api = 'https://maze.peterbooker.com/api/v1/game/';
 const roundTime = 120;
 const size = 16;
 
+
 function App() {
   const [countDown, setCountDown] = useState(0);
   const [gameState, setGameState] = useState({});

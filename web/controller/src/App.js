@@ -22,12 +22,12 @@ function App() {
     });
   };
   const move = (direction) => {
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer " + auth);
-    myHeaders.append("Content-Type", "application/json");
+    var headers = new Headers();
+    headers.append("Authorization", "Bearer " + auth);
+    headers.append("Content-Type", "application/json");
     fetch(api + id + '/player/move', {
       method: 'POST',
-      headers: myHeaders,
+      headers: headers,
       body: JSON.stringify({direction: direction, distance: 1})
     })
     .then(response => response.json())
