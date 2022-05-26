@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"math/rand"
 	"strings"
 	"sync"
@@ -154,7 +153,7 @@ func (g *Game) runGame() {
 
 // runMovement runs the player movement action.
 func (g *Game) runMovement() {
-	ticker := time.NewTicker(1000 * time.Millisecond)
+	ticker := time.NewTicker(350 * time.Millisecond)
 
 	go func(g *Game) {
 		for {
@@ -163,7 +162,6 @@ func (g *Game) runMovement() {
 				ticker.Stop()
 				return
 			case <-ticker.C:
-				fmt.Println("Processing Player Movement")
 				for _, p := range g.Players {
 					if p != nil {
 						// Skip if no move queued.
