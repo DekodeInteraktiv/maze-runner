@@ -38,6 +38,8 @@ func (s *Server) gameCreate() http.HandlerFunc {
 		Size         int                   `json:"size"`
 		Maze         [][]game.MazeTileType `json:"maze"`
 		Claims       [][]game.ClaimType    `json:"claims"`
+		Objects      []*game.Object        `json:"objects"`
+		ActionLog    []*game.Action        `json:"-"`
 		sync.RWMutex `json:"-"`
 	}
 
@@ -493,18 +495,37 @@ func (s *Server) playerAbilityBomb() http.HandlerFunc {
 			return
 		}
 
-		for x := (p.Pos.X - 2); x < (p.Pos.X + 2); x++ {
-			for y := (p.Pos.Y - 2); y < (p.Pos.Y + 2); y++ {
-				if x >= 0 && x < (g.Size-1) && y >= 0 && y < (g.Size-1) {
-					g.Claims[x][y] = p.Team
-				}
+		// Check if player ability on cooldown.
+		if !p.Abilities.BombAvailable {
+			data := struct {
+				Error string
+			}{
+				"Bomb ability on cooldown.",
 			}
+
+			writeJSON(w, data, http.StatusForbidden)
+			return
 		}
+
+		// Calculate position.
+		pos := &game.Point{
+			X: p.Pos.X,
+			Y: p.Pos.Y,
+		}
+
+		// Set ability on cooldown.
+		p.Lock()
+		p.Abilities.BombAvailable = false
+		p.Unlock()
+
+		// Make new object and action log.
+		g.NewObject(game.Bomb, "", pos, p)
+		g.NewAction(game.BombPlace, pos)
 
 		data := struct {
 			Message string
 		}{
-			"Successfully bombed area.",
+			"Successfully placed bomb.",
 		}
 
 		writeJSON(w, data, 200)

@@ -38,6 +38,8 @@ type Game struct {
 	Size         int              `json:"size"`
 	Maze         [][]MazeTileType `json:"maze"`
 	Claims       [][]ClaimType    `json:"claims"`
+	Objects      []*Object        `json:"objects"`
+	ActionLog    []*Action        `json:"-"`
 	sync.RWMutex `json:"-"`
 }
 
@@ -46,19 +48,15 @@ type Game struct {
 
 // New returns a new game instance.
 func New(size int, distribution float64, timelimit uint) *Game {
-	//maze := NewMaze(size)
-
 	simplex := noise.New(rand.Int63())
 
-	grid := make([][]MazeTileType, size)
-	for i := range grid {
-		grid[i] = make([]MazeTileType, size)
-	}
+	grid := newGrid(size)
 
-	claims := make([][]ClaimType, size)
-	for i := range claims {
-		claims[i] = make([]ClaimType, size)
-	}
+	claims := newClaims(size)
+
+	objects := make([]*Object, 50)
+
+	actionLog := make([]*Action, 50)
 
 	for x := 0; x < size; x++ {
 		for y := 0; y < size; y++ {
@@ -105,6 +103,8 @@ func New(size int, distribution float64, timelimit uint) *Game {
 		Size:      size,
 		Maze:      grid,
 		Claims:    claims,
+		Objects:   objects,
+		ActionLog: actionLog,
 	}
 }
 

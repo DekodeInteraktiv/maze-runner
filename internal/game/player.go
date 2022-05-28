@@ -5,15 +5,21 @@ import (
 )
 
 type Player struct {
-	Name     string    `json:"name"`
-	ID       int       `json:"id"`
-	Sprite   []byte    `json:"-"`
-	Color    string    `json:"color"`
-	Pos      *Point    `json:"pos"`
-	Token    string    `json:"token"`
-	Team     ClaimType `json:"team"`
-	NextMove string    `json:"-"`
+	Name      string    `json:"name"`
+	ID        int       `json:"id"`
+	Sprite    []byte    `json:"-"`
+	Color     string    `json:"color"`
+	Pos       *Point    `json:"pos"`
+	Token     string    `json:"token"`
+	Team      ClaimType `json:"team"`
+	Abilities Abilities `json:"abilities"`
+	NextMove  string    `json:"-"`
 	sync.RWMutex
+}
+
+type Abilities struct {
+	BombAvailable  bool `json:"bomb_available"`
+	ShootAvailable bool `json:"shoot_available"`
 }
 
 // Move moves a player.
