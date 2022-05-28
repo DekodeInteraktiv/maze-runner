@@ -69,7 +69,7 @@ func (s *Server) apiRoutes() chi.Router {
 				r.Post("/move", s.playerMove())
 				r.Get("/status", s.playerStatus())
 
-				r.Post("/ability/bomb", s.playerAbilityBomb())
+				r.Get("/ability/bomb", s.playerAbilityBomb())
 			})
 		})
 	})
