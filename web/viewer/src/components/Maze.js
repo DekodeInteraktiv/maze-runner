@@ -21,7 +21,7 @@ const Cell = ({coords, players = [], cell, claims}) => {
     object = {type: "obstacle"};
   } else if(players) {
     players.forEach((player, i) => {
-      if(coords.X === player.Pos.X && coords.Y === player.Pos.Y) {
+      if(coords.X === player.pos.X && coords.Y === player.pos.Y) {
         object = {type: "player", id:i};
       }
     });

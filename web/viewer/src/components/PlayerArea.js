@@ -22,7 +22,7 @@ const PlayerArea = ({id, players, password, claims}) => {
   return(
     <div key={`player-${id}`} className={`player-area player-area-${id}`}>
       <SoundBoard.Select />
-      <span className="name">{player.Name}</span>
+      <span className="name">{player.name}</span>
       <span className="score">Score: {score}</span>
     </div>
   )
