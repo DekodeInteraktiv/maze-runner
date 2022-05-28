@@ -212,13 +212,7 @@ func (s *Server) playerCreate() http.HandlerFunc {
 		// Register the player in the game.
 		p := g.RegisterPlayer(payload.Name, payload.Color)
 
-		data := struct {
-			Player *game.Player
-		}{
-			p,
-		}
-
-		writeJSON(w, data, 200)
+		writeJSON(w, p, 200)
 	}
 }
 

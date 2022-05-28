@@ -15,7 +15,7 @@ function App() {
     .then(response => response.json())
     .then(data => {
       console.log('Registred game', data);
-      setAuth(data.Player.Token);
+      setAuth(data.token);
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -33,7 +33,7 @@ function App() {
     .then(response => response.json())
     .then(data => {
       console.log('Registred game', data);
-      setAuth(data.Player.Token);
+      setAuth(data.token);
     })
     .catch((error) => {
       console.error('Error:', error);
