@@ -3,7 +3,9 @@ package game
 type ActionType uint16
 
 const (
-	Shoot ActionType = iota
+	GameStart ActionType = iota
+	GameEnd
+	Shoot
 	BombPlace
 	BombExplode
 	PlayerHit
@@ -12,7 +14,7 @@ const (
 type Action struct {
 	ID   int        `json:"id"`
 	Type ActionType `json:"type"`
-	Pos  *Point     `json:"pos"`
+	Pos  *Point     `json:"pos,omitempty"`
 }
 
 // NewAction returns a new activity.
@@ -21,7 +23,7 @@ func (g *Game) NewAction(activityType ActionType, pos *Point) {
 	defer g.Unlock()
 
 	action := &Action{
-		ID:   0,
+		ID:   actionID.new(),
 		Type: activityType,
 		Pos:  pos,
 	}

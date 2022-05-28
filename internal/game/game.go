@@ -17,12 +17,10 @@ const (
 )
 
 var (
-	gameID = incrementer{
-		id: 1,
-	}
-	playerID = incrementer{
-		id: 1,
-	}
+	gameID     = incrementer{id: 1}
+	playerID   = incrementer{id: 1}
+	actionID   = incrementer{id: 1}
+	objectID   = incrementer{id: 1}
 	Directions = []string{"north", "south", "west", "east"}
 )
 
@@ -54,9 +52,9 @@ func New(size int, distribution float64, timelimit uint) *Game {
 
 	claims := newClaims(size)
 
-	objects := make([]*Object, 50)
+	objects := make([]*Object, 0, 50)
 
-	actionLog := make([]*Action, 50)
+	actionLog := make([]*Action, 0, 50)
 
 	for x := 0; x < size; x++ {
 		for y := 0; y < size; y++ {
@@ -122,6 +120,8 @@ func (g *Game) setActive() {
 	g.Lock()
 	g.Status = GameRunning
 	g.Unlock()
+
+	g.NewAction(GameStart, nil)
 }
 
 // runGame runs the game timer.
@@ -143,6 +143,8 @@ func (g *Game) runGame() {
 					g.Lock()
 					g.Status = GameFinished
 					g.Unlock()
+
+					g.NewAction(GameEnd, nil)
 
 					g.Active <- true
 				}

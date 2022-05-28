@@ -81,6 +81,23 @@ func (s *Server) gameCreate() http.HandlerFunc {
 
 // gameStatus gets the status for a specific game.
 func (s *Server) gameStatus() http.HandlerFunc {
+	type StatusGameResponse struct {
+		ID           int                   `json:"id"`
+		Password     string                `json:"password"`
+		Token        string                `json:"-"`
+		Status       string                `json:"status"`
+		Timer        uint                  `json:"timer"`
+		TimeLimit    uint                  `json:"time_limit"`
+		Active       chan bool             `json:"-"`
+		Players      []*game.Player        `json:"players"`
+		Size         int                   `json:"size"`
+		Maze         [][]game.MazeTileType `json:"maze"`
+		Claims       [][]game.ClaimType    `json:"claims"`
+		Objects      []*game.Object        `json:"objects"`
+		ActionLog    []*game.Action        `json:"log"`
+		sync.RWMutex `json:"-"`
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		idStr := chi.URLParam(r, "gameID")
 
@@ -110,8 +127,10 @@ func (s *Server) gameStatus() http.HandlerFunc {
 
 		g.RLock()
 		defer g.RUnlock()
+		newGame := (*StatusGameResponse)(g)
+		//newGame.ActionLog = newGame.ActionLog[0:25]
 
-		writeJSON(w, g, 200)
+		writeJSON(w, newGame, 200)
 	}
 }
 
@@ -520,6 +539,109 @@ func (s *Server) playerAbilityBomb() http.HandlerFunc {
 			Message string
 		}{
 			"Successfully placed bomb.",
+		}
+
+		writeJSON(w, data, 200)
+	}
+}
+
+// playerAbilityShoot uses the shoot ability.
+func (s *Server) playerAbilityShoot() http.HandlerFunc {
+	type Payload struct {
+		Direction string `json:"direction"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Get the JSON encoded body data.
+		var payload Payload
+		err := json.NewDecoder(r.Body).Decode(&payload)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Invalid POST data.",
+			}
+			writeJSON(w, data, http.StatusBadRequest)
+			return
+		}
+
+		// Get the game ID and search for the game.
+		gameIDStr := chi.URLParam(r, "gameID")
+
+		gameID, err := strconv.Atoi(gameIDStr)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Invalid Game ID.",
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
+
+		g := s.GetGameByID(gameID)
+
+		// Get Auth Token.
+		ctx := r.Context()
+		token := ctx.Value("Token").(string)
+
+		// Get the player by auth token.
+		p := g.GetPlayerByToken(token)
+		if p == nil {
+			data := struct {
+				Error string
+			}{
+				"Authentication token does not match any player registered for this game.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
+			return
+		}
+
+		// Check game is active.
+		if g.Status != game.GameRunning {
+			data := struct {
+				Error string
+			}{
+				"The game is not active.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
+			return
+		}
+
+		// Check if player ability on cooldown.
+		if !p.Abilities.ShootAvailable {
+			data := struct {
+				Error string
+			}{
+				"Shoot ability on cooldown.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
+			return
+		}
+
+		// Calculate position.
+		pos := &game.Point{
+			X: p.Pos.X,
+			Y: p.Pos.Y,
+		}
+
+		// Set ability on cooldown.
+		p.Lock()
+		p.Abilities.ShootAvailable = false
+		p.Unlock()
+
+		// Make new object and action log.
+		g.NewObject(game.Bullet, payload.Direction, pos, p)
+		g.NewAction(game.Shoot, pos)
+
+		data := struct {
+			Message string
+		}{
+			"Successful shoot action.",
 		}
 
 		writeJSON(w, data, 200)
