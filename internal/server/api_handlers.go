@@ -299,7 +299,7 @@ func (s *Server) playerMoveOld() http.HandlerFunc {
 
 		// Check if another player is already in the new position.
 		for _, player := range g.Players {
-			if player.ID != p.ID && p.Pos == player.Pos {
+			if player.ID != p.ID && newPos == *player.Pos {
 				data := struct {
 					Error string
 				}{
