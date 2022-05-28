@@ -5,8 +5,7 @@ import "time"
 type ObjectType uint16
 
 const (
-	None ObjectType = iota
-	Bullet
+	Bullet ObjectType = iota
 	Bomb
 )
 
