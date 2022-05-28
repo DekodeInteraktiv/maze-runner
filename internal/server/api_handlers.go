@@ -478,7 +478,7 @@ func (s *Server) playerAbilityBomb() http.HandlerFunc {
 		}
 
 		// Check game is active.
-		if g.Status == game.GameRunning {
+		if g.Status != game.GameRunning {
 			data := struct {
 				Error string
 			}{
