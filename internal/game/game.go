@@ -244,6 +244,9 @@ func (g *Game) RegisterPlayer(name, color string) *Player {
 		NextMove: "",
 	}
 
+	p.Abilities.BombAvailable = true
+	p.Abilities.ShootAvailable = true
+
 	g.Players = append(g.Players, p)
 
 	return p
