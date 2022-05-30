@@ -253,6 +253,7 @@ body {
 	max-width: 40px;
 	width: 50%;
 	height: 30%;
+	position: relative;
 }
 
 .player-1 .player-body {
@@ -268,10 +269,44 @@ body {
 }
 
 .player-feet {
-	border-left: 8px solid #d8d3c3;
-	border-right: 8px solid #d8d3c3;
 	width: 42%;
-	height: 12%;
+	height: 8%;
+	position: relative;
+}
+
+.player-feet::before,
+.player-feet::after,
+.player-body::before,
+.player-body::after {
+	position: absolute;
+	content: "";
+	display: block;
+	background: #d8d3c3;
+	left: 0;
+	top: 0;
+}
+
+.player-feet::before,
+.player-feet::after {
+	height: 100%;
+	width: 20%;
+}
+
+.player-body::before,
+.player-body::after {
+	height: 35%;
+	width: 20%;
+	left: -20%;
+}
+
+.player-feet::after {
+	left: auto;
+	right: 0;
+}
+
+.player-body::after {
+	left: auto;
+	right: -20%;
 }
 
 button {
