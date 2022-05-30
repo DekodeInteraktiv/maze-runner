@@ -143,7 +143,7 @@ function App() {
         </div>
         <PlayerArea id="4" claims={gameState.claims} players={gameState.players} password={gameState.password} />
       </div>
-      <Maze maze={maze} claims={gameState.claims} countDown={countDown} players={gameState.players}/>
+      <Maze maze={maze} log={gameState.log} claims={gameState.claims} objects={gameState.objects} countDown={countDown} players={gameState.players}/>
       <div className="app-foot">
         <PlayerArea id="1" claims={gameState.claims} players={gameState.players} password={gameState.password} />
         <div className="controls">

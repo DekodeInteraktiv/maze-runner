@@ -32,8 +32,40 @@ function App() {
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Registred game', data);
-      setAuth(data.token);
+      console.log('Move', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  };
+  const shoot = (direction) => {
+    var headers = new Headers();
+    headers.append("Authorization", "Bearer " + auth);
+    headers.append("Content-Type", "application/json");
+    fetch(api + id + '/player/ability/shoot', {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({direction: direction})
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Shoot', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  };
+  const bomb = () => {
+    var headers = new Headers();
+    headers.append("Authorization", "Bearer " + auth);
+    headers.append("Content-Type", "application/json");
+    fetch(api + id + '/player/ability/bomb', {
+      method: 'GET',
+      headers: headers
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Bomb', data);
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -74,6 +106,12 @@ function App() {
       <button onClick={() => move('south')}>▼</button>
       <button onClick={() => move('east')}>➤</button>
       <div><input type="text" value="" onKeyDown={keyControllers} placeholder="Select to navigate with keyboard" /></div>
+      <div><button onClick={bomb}>Bomb</button></div>
+      <h3>Shoot</h3>
+        <div><button onClick={() => shoot('north')}>▲</button></div>
+        <button onClick={() => shoot('west')}>⮜</button>
+        <button onClick={() => shoot('south')}>▼</button>
+        <button onClick={() => shoot('east')}>➤</button>
       </div>
     }
     </div>
