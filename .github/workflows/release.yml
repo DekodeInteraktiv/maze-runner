@@ -35,6 +35,12 @@ jobs:
       - name: Controller App
         run: cd web/controller && npm ci && npm run build && cp -r ./build ../../internal/assets/controller/
 
+      - name: Leaderboard App
+        run: cd web/leaderboard && npm ci && npm run build && cp -r ./build ../../internal/assets/leaderboard/
+
+      - name: Register App
+        run: cd web/register && npm ci && npm run build && cp -r ./build ../../internal/assets/register/
+
       - name: Build Go Binary
         run: go build -ldflags="-s -w -X main.version=$(git describe --tags --abbrev=0) -X main.commit=$(git rev-parse --verify HEAD) -X main.date=$(date +'%Y/%m/%d')" -o ./build ./...
 

@@ -45,6 +45,36 @@ func (s *Server) routes() {
 		r.Handle("/controller/static/*", http.FileServer(http.FS(assets.Content)))
 	})
 
+	// Leaderboard App
+	leaderboardCreds := map[string]string{"leaderboard": "d3kode"}
+	s.Router.Group(func(r chi.Router) {
+		r.Use(middleware.BasicAuth("leaderboard", leaderboardCreds))
+		r.Get("/leaderboard", s.leaderboardIndex())
+		r.Get("/leaderboard/", s.leaderboardIndex())
+		r.Get("/leaderboard/favicon.ico", s.leaderboardFavicon())
+		r.Get("/leaderboard/robots.txt", s.leaderboardRobots())
+		r.Get("/leaderboard/manifest.json", s.leaderboardManifest())
+		r.Get("/leaderboard/asset-manifest.json", s.leaderboardAssetManifest())
+		r.Get("/leaderboard/logo192.png", s.leaderboardLogo192())
+		r.Get("/leaderboard/logo512.png", s.leaderboardLogo512())
+		r.Handle("/leaderboard/static/*", http.FileServer(http.FS(assets.Content)))
+	})
+
+	// Register App
+	registerCreds := map[string]string{"register": "d3kode"}
+	s.Router.Group(func(r chi.Router) {
+		r.Use(middleware.BasicAuth("register", registerCreds))
+		r.Get("/register", s.registerIndex())
+		r.Get("/register/", s.registerIndex())
+		r.Get("/register/favicon.ico", s.registerFavicon())
+		r.Get("/register/robots.txt", s.registerRobots())
+		r.Get("/register/manifest.json", s.registerManifest())
+		r.Get("/register/asset-manifest.json", s.registerAssetManifest())
+		r.Get("/register/logo192.png", s.registerLogo192())
+		r.Get("/register/logo512.png", s.registerLogo512())
+		r.Handle("/register/static/*", http.FileServer(http.FS(assets.Content)))
+	})
+
 	// Add API v1 routes
 	s.Router.Mount("/api/v1", s.apiRoutes())
 
