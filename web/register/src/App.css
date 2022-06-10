@@ -1,0 +1,70 @@
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+
+body {
+	background-color: #282c34;
+	color: #fff;
+	font-family: "VT323", monospace;
+	font-size: 2vw;
+	text-align: center;
+
+	--panel-size: 12vh;
+	--map-size: calc(100vh - var(--panel-size) * 2);
+	--map-X: 50;
+	--map-Y: 50;
+	--blue: #ff9100;
+	--pixelated-small: polygon(0 2px, 2px 2px, 2px 0, calc(100% - 2px) 0, calc(100% - 2px) 2px, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 2px calc(100% - 2px), 0 calc(100% - 2px));
+	--pixelated: polygon(0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px));
+}
+
+* {
+	box-sizing: border-box;
+}
+
+.app-head,
+.app-foot {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	padding: 10px 20px;
+}
+
+.app-head img {
+	height: auto;
+	margin-top: 2vw;
+	width: 10vw;
+}
+
+h1,
+h2,
+h3 {
+	font-weight: 400;
+}
+
+input[type="text"] {
+	font-size: 2vw;
+	min-width: 20vw;
+	padding: 10px;
+}
+
+button {
+	cursor: pointer;
+	font-family: "VT323", monospace;
+	font-size: 2vw;
+	margin: 2vw;
+	padding: 1vw;
+}
+
+h3 {
+	font-size: 3vw;
+	margin: 2vw 0 1vw;
+}
+
+.radio-buttons {
+	display: flex;
+	gap: 2vw;
+	justify-content: center;
+}
+
+.step {
+	text-align: center;
+}
