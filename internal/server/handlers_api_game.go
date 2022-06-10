@@ -185,6 +185,7 @@ func (s *Server) gameManual() http.HandlerFunc {
 			}
 
 			writeJSON(w, data, http.StatusForbidden)
+			return
 		}
 
 		data := struct {
