@@ -103,6 +103,7 @@ func (s *Server) gameStatus() http.HandlerFunc {
 			}
 
 			writeJSON(w, data, http.StatusNotFound)
+			return
 		}
 
 		g := s.GetGameByID(id)
@@ -140,7 +141,8 @@ func (s *Server) gameStart() http.HandlerFunc {
 				"Invalid Game ID",
 			}
 
-			writeJSON(w, data, 404)
+			writeJSON(w, data, http.StatusNotFound)
+			return
 		}
 
 		g := s.GetGameByID(id)
@@ -154,6 +156,72 @@ func (s *Server) gameStart() http.HandlerFunc {
 			fmt.Sprintf("Game (ID: %d) is starting in 5 seconds.", g.ID),
 		}
 		g.RUnlock()
+
+		writeJSON(w, data, http.StatusAccepted)
+	}
+}
+
+// gameTileGift sets up a new game.
+func (s *Server) gameTileGift() http.HandlerFunc {
+	type Payload struct {
+		X    int    `json:"x"`
+		Y    int    `json:"y"`
+		Team uint16 `json:"team"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Get the JSON encoded body data.
+		var payload Payload
+		err := json.NewDecoder(r.Body).Decode(&payload)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Invalid POST data.",
+			}
+			writeJSON(w, data, http.StatusBadRequest)
+			return
+		}
+
+		// Get the Game ID.
+		idStr := chi.URLParam(r, "gameID")
+
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Invalid Game ID",
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
+
+		// Find the game.
+		g := s.GetGameByID(id)
+
+		// Check the X/Y cords are valid.
+		if payload.X >= (g.Size-1) || payload.Y >= (g.Size-1) || payload.X < 0 || payload.Y < 0 {
+			data := struct {
+				Error string
+			}{
+				"Coordinates are out of bounds.",
+			}
+
+			writeJSON(w, data, http.StatusBadRequest)
+			return
+		}
+
+		g.RLock()
+		g.Claims[payload.X][payload.Y] = game.ClaimType(payload.Player)
+		g.RUnlock()
+
+		data := struct {
+			Message string
+		}{
+			"Tile successfully gifted.",
+		}
 
 		writeJSON(w, data, http.StatusAccepted)
 	}
