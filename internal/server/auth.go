@@ -6,13 +6,15 @@ import (
 	"strings"
 )
 
+type Token string
+
 // VerifyToken implements a simple middleware handler.
 func (s *Server) VerifyToken() func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
 			token := TokenFromHeader(r)
-			newCtx := context.WithValue(ctx, "Token", token)
+			newCtx := context.WithValue(ctx, Token("Token"), token)
 
 			next.ServeHTTP(w, r.WithContext(newCtx))
 		})
