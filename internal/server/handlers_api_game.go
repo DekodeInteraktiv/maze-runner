@@ -214,7 +214,7 @@ func (s *Server) gameTileGift() http.HandlerFunc {
 		}
 
 		g.RLock()
-		g.Claims[payload.X][payload.Y] = game.ClaimType(payload.Player)
+		g.Claims[payload.X][payload.Y] = game.ClaimType(payload.Team)
 		g.RUnlock()
 
 		data := struct {
