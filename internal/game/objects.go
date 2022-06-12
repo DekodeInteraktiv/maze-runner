@@ -32,6 +32,7 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 	}
 
 	ticker := time.NewTicker(350 * time.Millisecond)
+	explode := time.Now().Add(5 * time.Second)
 	end := time.Now().Add(10 * time.Second)
 
 	// Process as bomb.
@@ -43,9 +44,7 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 					ticker.Stop()
 					return
 				case <-ticker.C:
-					if time.Now().After(end) {
-						ticker.Stop()
-
+					if time.Now().After(explode) {
 						// TODO: Check game is active.
 
 						g.NewAction(BombExplode, object.Pos)
@@ -60,13 +59,17 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 							}
 						}
 						g.Unlock()
+					}
 
-						// Remove bomb object.
-						g.RemoveObject(o.ID)
+					if time.Now().After(end) {
+						ticker.Stop()
 
 						object.Owner.Lock()
 						object.Owner.Abilities.BombAvailable = true
 						object.Owner.Unlock()
+
+						// Remove bomb object.
+						g.RemoveObject(o.ID)
 					}
 				}
 			}
