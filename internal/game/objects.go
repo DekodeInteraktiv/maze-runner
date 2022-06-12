@@ -102,13 +102,13 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 
 					switch o.Direction {
 					case "north":
-						newPos = p.Pos.North()
+						newPos = o.Pos.North()
 					case "south":
-						newPos = p.Pos.South()
+						newPos = o.Pos.South()
 					case "west":
-						newPos = p.Pos.West()
+						newPos = o.Pos.West()
 					case "east":
-						newPos = p.Pos.East()
+						newPos = o.Pos.East()
 					}
 
 					// Check if the object is trying to move outside the maze.
