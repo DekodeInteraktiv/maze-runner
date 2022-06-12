@@ -120,7 +120,7 @@ func (s *Server) playerMoveOld() http.HandlerFunc {
 
 		// Get Auth Token.
 		ctx := r.Context()
-		token := ctx.Value("Token").(string)
+		token := ctx.Value(Token("Token")).(string)
 
 		// Get the player by auth token.
 		p := g.GetPlayerByToken(token)
@@ -251,7 +251,7 @@ func (s *Server) playerMove() http.HandlerFunc {
 
 		// Get Auth Token.
 		ctx := r.Context()
-		token := ctx.Value("Token").(string)
+		token := ctx.Value(Token("Token")).(string)
 
 		// Get the player by auth token.
 		p := g.GetPlayerByToken(token)
@@ -326,7 +326,7 @@ func (s *Server) playerAbilityBomb() http.HandlerFunc {
 
 		// Get Auth Token.
 		ctx := r.Context()
-		token := ctx.Value("Token").(string)
+		token := ctx.Value(Token("Token")).(string)
 
 		// Get the player by auth token.
 		p := g.GetPlayerByToken(token)
@@ -429,7 +429,7 @@ func (s *Server) playerAbilityShoot() http.HandlerFunc {
 
 		// Get Auth Token.
 		ctx := r.Context()
-		token := ctx.Value("Token").(string)
+		token := ctx.Value(Token("Token")).(string)
 
 		// Get the player by auth token.
 		p := g.GetPlayerByToken(token)
@@ -526,7 +526,7 @@ func (s *Server) playerStatus() http.HandlerFunc {
 
 		// Get Auth Token.
 		ctx := r.Context()
-		token := ctx.Value("Token").(string)
+		token := ctx.Value(Token("Token")).(string)
 
 		// Get the player by auth token.
 		p := g.GetPlayerByToken(token)
