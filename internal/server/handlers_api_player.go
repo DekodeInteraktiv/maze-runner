@@ -611,9 +611,9 @@ func (s *Server) playerStatus() http.HandlerFunc {
 			maze[i] = make([]game.MazeTileType, size)
 		}
 
-		for x := (p.Pos.X - 2); x < (p.Pos.X + 2); x++ {
-			for y := (p.Pos.Y - 2); y < (p.Pos.Y + 2); y++ {
-				if x >= 0 && x < (g.Size-1) && y >= 0 && y < (g.Size-1) {
+		for x := (p.Pos.X - 3); x < (p.Pos.X + 3); x++ {
+			for y := (p.Pos.Y - 3); y < (p.Pos.Y + 3); y++ {
+				if x >= 0 && x < g.Size && y >= 0 && y < g.Size {
 					maze[x][y] = g.Maze[x][y]
 				}
 			}
@@ -625,9 +625,9 @@ func (s *Server) playerStatus() http.HandlerFunc {
 			claims[i] = make([]game.ClaimType, size)
 		}
 
-		for x := (p.Pos.X - 2); x < (p.Pos.X + 2); x++ {
-			for y := (p.Pos.Y - 2); y < (p.Pos.Y + 2); y++ {
-				if x >= 0 && x < (g.Size-1) && y >= 0 && y < (g.Size-1) {
+		for x := (p.Pos.X - 3); x < (p.Pos.X + 3); x++ {
+			for y := (p.Pos.Y - 3); y < (p.Pos.Y + 3); y++ {
+				if x >= 0 && x < g.Size && y >= 0 && y < g.Size {
 					claims[x][y] = g.Claims[x][y]
 				}
 			}
