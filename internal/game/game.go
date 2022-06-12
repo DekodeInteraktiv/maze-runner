@@ -299,6 +299,32 @@ func (g *Game) PlayerStartPosition(team ClaimType) *Point {
 	return nil
 }
 
+// PlayerHit manages the player being hit.
+func (g *Game) PlayerHit(p *Player) {
+	p.Lock()
+	p.Disabled = true
+	p.Unlock()
+
+	ticker := time.NewTicker(1 * time.Second)
+	end := time.Now().Add(2 * time.Second)
+
+	go func(p *Player) {
+		for {
+			select {
+			case <-ticker.C:
+				if time.Now().After(end) {
+					ticker.Stop()
+
+					p.Lock()
+					p.Disabled = false
+					p.Pos = g.PlayerStartPosition(p.Team)
+					p.Unlock()
+				}
+			}
+		}
+	}(p)
+}
+
 // GetPlayerByToken finds a player by their token.
 func (g *Game) GetPlayerByToken(token string) *Player {
 	g.Lock()

@@ -156,6 +156,36 @@ func (s *Server) playerMoveInstant() http.HandlerFunc {
 			return
 		}
 
+		// Check if player disabled.
+		p.RLock()
+		if p.Disabled {
+			data := struct {
+				Error string
+			}{
+				"You are currently stunned.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
+			p.RUnlock()
+			return
+		}
+		p.RUnlock()
+
+		// Check if movement on cooldown.
+		p.RLock()
+		if !p.Abilities.MoveAvailable {
+			data := struct {
+				Error string
+			}{
+				"Movement is currently on cooldown.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
+			p.RUnlock()
+			return
+		}
+		p.RUnlock()
+
 		// Check game is active.
 		if g.Status == game.GameRunning {
 			data := struct {
@@ -223,6 +253,9 @@ func (s *Server) playerMoveInstant() http.HandlerFunc {
 		// Move player.
 		g.MovePlayer(p, newPos)
 
+		// Manage ability cooldown.
+		p.MoveCooldown()
+
 		data := struct {
 			Player *game.Player
 		}{
@@ -233,8 +266,8 @@ func (s *Server) playerMoveInstant() http.HandlerFunc {
 	}
 }
 
-// playerMove queues a player move.
-func (s *Server) playerMove() http.HandlerFunc {
+// playerMoveQueue queues a player move.
+func (s *Server) playerMoveQueue() http.HandlerFunc {
 	type Payload struct {
 		Direction string `json:"direction"`
 	}
@@ -382,6 +415,21 @@ func (s *Server) playerAbilityBomb() http.HandlerFunc {
 			return
 		}
 
+		// Check if player disabled.
+		p.RLock()
+		if p.Disabled {
+			data := struct {
+				Error string
+			}{
+				"You are currently stunned.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
+			p.RUnlock()
+			return
+		}
+		p.RUnlock()
+
 		// Check game is active.
 		if g.Status != game.GameRunning {
 			data := struct {
@@ -492,6 +540,21 @@ func (s *Server) playerAbilityShoot() http.HandlerFunc {
 			writeJSON(w, data, http.StatusForbidden)
 			return
 		}
+
+		// Check if player disabled.
+		p.RLock()
+		if p.Disabled {
+			data := struct {
+				Error string
+			}{
+				"You are currently stunned.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
+			p.RUnlock()
+			return
+		}
+		p.RUnlock()
 
 		// Check game is active.
 		if g.Status != game.GameRunning {

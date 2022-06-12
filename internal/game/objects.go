@@ -126,13 +126,16 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 					for _, player := range g.Players {
 						player.RLock()
 						if player.ID != o.Owner.ID && newPos == *player.Pos {
+							player.RUnlock()
+
 							ticker.Stop()
 							g.NewAction(PlayerHit, pos)
+							g.PlayerHit(player)
 
 							g.Lock()
 							g.RemoveObject(o.ID)
 							g.Unlock()
-							player.RUnlock()
+
 							return
 						}
 						player.RUnlock()

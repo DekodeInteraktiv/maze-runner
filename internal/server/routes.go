@@ -108,7 +108,7 @@ func (s *Server) apiRoutes() chi.Router {
 
 				r.Post("/register/{password}", s.playerCreate())
 
-				r.Post("/move", s.playerMove())
+				r.Post("/move", s.playerMoveInstant())
 				r.Get("/status", s.playerStatus())
 
 				r.Get("/ability/bomb", s.playerAbilityBomb())

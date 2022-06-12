@@ -13,12 +13,14 @@ type Player struct {
 	Token     string    `json:"token"`
 	Team      ClaimType `json:"team"`
 	Abilities Abilities `json:"abilities"`
+	Disabled  bool      `json:"disabled"`
 	NextMove  string    `json:"-"`
 	sync.RWMutex
 }
 
 type Abilities struct {
 	BombAvailable  bool `json:"bomb_available"`
+	MoveAvailable  bool `json:"move_available"`
 	ShootAvailable bool `json:"shoot_available"`
 }
 
@@ -121,6 +123,31 @@ func (p *Player) BombCooldown() {
 
 					p.Lock()
 					p.Abilities.BombAvailable = true
+					p.Unlock()
+				}
+			}
+		}
+	}(p)
+}
+
+// MoveCooldown manages the bomb cooldown.
+func (p *Player) MoveCooldown() {
+	p.Lock()
+	p.Abilities.BombAvailable = false
+	p.Unlock()
+
+	ticker := time.NewTicker(1 * time.Second)
+	end := time.Now().Add(1 * time.Second)
+
+	go func(p *Player) {
+		for {
+			select {
+			case <-ticker.C:
+				if time.Now().After(end) {
+					ticker.Stop()
+
+					p.Lock()
+					p.Abilities.MoveAvailable = true
 					p.Unlock()
 				}
 			}
