@@ -107,6 +107,16 @@ func (s *Server) gameStatus() http.HandlerFunc {
 		}
 
 		g := s.GetGameByID(id)
+		if g == nil {
+			data := struct {
+				Error string
+			}{
+				fmt.Sprintf("No game found with ID: %d.", id),
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
 
 		if g == nil {
 			data := struct {
@@ -146,6 +156,16 @@ func (s *Server) gameStart() http.HandlerFunc {
 		}
 
 		g := s.GetGameByID(id)
+		if g == nil {
+			data := struct {
+				Error string
+			}{
+				fmt.Sprintf("No game found with ID: %d.", id),
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
 
 		g.Start()
 
@@ -156,6 +176,88 @@ func (s *Server) gameStart() http.HandlerFunc {
 			fmt.Sprintf("Game (ID: %d) is starting in 5 seconds.", g.ID),
 		}
 		g.RUnlock()
+
+		writeJSON(w, data, http.StatusAccepted)
+	}
+}
+
+// gameReset resets the game to its initial state.
+func (s *Server) gameReset() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idStr := chi.URLParam(r, "gameID")
+
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Invalid Game ID",
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
+
+		g := s.GetGameByID(id)
+		if g == nil {
+			data := struct {
+				Error string
+			}{
+				fmt.Sprintf("No game found with ID: %d.", id),
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
+
+		g.Reset()
+
+		data := struct {
+			Message string
+		}{
+			fmt.Sprintf("Game (ID: %d) has been reset.", id),
+		}
+
+		writeJSON(w, data, http.StatusAccepted)
+	}
+}
+
+// gameStop finishes the game.
+func (s *Server) gameStop() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idStr := chi.URLParam(r, "gameID")
+
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			data := struct {
+				Error string
+			}{
+				"Invalid Game ID",
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
+
+		g := s.GetGameByID(id)
+		if g == nil {
+			data := struct {
+				Error string
+			}{
+				fmt.Sprintf("No game found with ID: %d.", id),
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
+
+		g.Stop()
+
+		data := struct {
+			Message string
+		}{
+			fmt.Sprintf("Game (ID: %d) has been stopped.", id),
+		}
 
 		writeJSON(w, data, http.StatusAccepted)
 	}
@@ -200,6 +302,16 @@ func (s *Server) gameTileGift() http.HandlerFunc {
 
 		// Find the game.
 		g := s.GetGameByID(id)
+		if g == nil {
+			data := struct {
+				Error string
+			}{
+				fmt.Sprintf("No game found with ID: %d.", id),
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
 
 		// Check the X/Y cords are valid.
 		if payload.X >= (g.Size-1) || payload.Y >= (g.Size-1) || payload.X < 0 || payload.Y < 0 {

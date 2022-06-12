@@ -51,6 +51,16 @@ func (s *Server) playerCreate() http.HandlerFunc {
 		}
 
 		g := s.GetGameByID(id)
+		if g == nil {
+			data := struct {
+				Error string
+			}{
+				fmt.Sprintf("No game found with ID: %d.", id),
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
 
 		if gamePass != g.Password {
 			data := struct {
@@ -81,8 +91,8 @@ func (s *Server) playerCreate() http.HandlerFunc {
 	}
 }
 
-// playerMoveOld moves a player.
-func (s *Server) playerMoveOld() http.HandlerFunc {
+// playerMoveInstant instantly moves a player.
+func (s *Server) playerMoveInstant() http.HandlerFunc {
 	type Payload struct {
 		Direction string `json:"direction"`
 		Distance  int    `json:"distance"`

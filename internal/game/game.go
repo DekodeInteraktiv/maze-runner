@@ -106,26 +106,51 @@ func New(size int, distribution float64, timelimit uint) *Game {
 	}
 }
 
-// Start triggers
+// Reset resets the game.
+func (g *Game) Reset() {
+	g.Lock()
+	defer g.Unlock()
+
+	g.Claims = newClaims(g.Size)
+
+	g.Objects = make([]*Object, 0, 50)
+
+	g.ActionLog = make([]*Action, 0, 50)
+
+	g.Active = make(chan bool)
+	g.Timer = 0
+	g.Status = GameOpen
+
+	for _, p := range g.Players {
+		p.Pos = g.PlayerStartPosition(p.Team)
+	}
+}
+
+// Start starts the game.
 func (g *Game) Start() {
 	// Start the game after 5 seconds.
 	duration := time.Duration(5) * time.Second
-	time.AfterFunc(duration, g.setActive)
 	time.AfterFunc(duration, g.runGame)
 	time.AfterFunc(duration, g.runMovement)
 }
 
-// start starts the game.
-func (g *Game) setActive() {
+// Stop stops the game.
+func (g *Game) Stop() {
+	g.Lock()
+	defer g.Unlock()
+
+	<-g.Active
+	g.Status = GameFinished
+}
+
+// runGame runs the game timer.
+func (g *Game) runGame() {
 	g.Lock()
 	g.Status = GameRunning
 	g.Unlock()
 
 	g.NewAction(GameStart, nil)
-}
 
-// runGame runs the game timer.
-func (g *Game) runGame() {
 	ticker := time.NewTicker(1 * time.Second)
 
 	go func(g *Game) {
@@ -137,6 +162,11 @@ func (g *Game) runGame() {
 				g.Lock()
 				g.Timer++
 				g.Unlock()
+
+				if g.Timer >= (g.TimeLimit - 15) {
+					g.NewAction(GameEndWarning, nil)
+				}
+
 				if g.Timer >= g.TimeLimit {
 					ticker.Stop()
 
@@ -223,17 +253,17 @@ func (g *Game) RegisterPlayer(name, styles string) *Player {
 
 	switch len(g.Players) {
 	case 0:
-		pos = &Point{X: 0, Y: 0}
 		team = Red
+		pos = g.PlayerStartPosition(team)
 	case 1:
-		pos = &Point{X: g.Size - 1, Y: g.Size - 1}
 		team = Blue
+		pos = g.PlayerStartPosition(team)
 	case 2:
-		pos = &Point{X: 0, Y: g.Size - 1}
 		team = Green
+		pos = g.PlayerStartPosition(team)
 	case 3:
-		pos = &Point{X: g.Size - 1, Y: 0}
 		team = Yellow
+		pos = g.PlayerStartPosition(team)
 	}
 
 	p := &Player{
@@ -252,6 +282,24 @@ func (g *Game) RegisterPlayer(name, styles string) *Player {
 	g.Players = append(g.Players, p)
 
 	return p
+}
+
+func (g *Game) PlayerStartPosition(team ClaimType) *Point {
+	g.RLock()
+	defer g.RUnlock()
+
+	switch team {
+	case Red:
+		return &Point{X: 0, Y: 0}
+	case Blue:
+		return &Point{X: g.Size - 1, Y: g.Size - 1}
+	case Green:
+		return &Point{X: 0, Y: g.Size - 1}
+	case Yellow:
+		return &Point{X: g.Size - 1, Y: 0}
+	}
+
+	return nil
 }
 
 // GetPlayerByToken finds a player by their token.

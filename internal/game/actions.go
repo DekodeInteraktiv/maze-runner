@@ -4,6 +4,7 @@ type ActionType uint16
 
 const (
 	GameStart ActionType = iota
+	GameEndWarning
 	GameEnd
 	Shoot
 	BombPlace
