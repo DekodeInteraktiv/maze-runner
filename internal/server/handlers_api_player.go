@@ -16,7 +16,7 @@ import (
 func (s *Server) playerCreate() http.HandlerFunc {
 	type Payload struct {
 		Name   string `json:"name"`
-		Styles string `json: "styles"`
+		Styles string `json:"styles"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
