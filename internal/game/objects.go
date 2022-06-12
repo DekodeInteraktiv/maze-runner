@@ -60,10 +60,11 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 								}
 							}
 						}
-						g.Unlock()
 
 						// Remove bomb object.
 						g.RemoveObject(o.ID)
+
+						g.Unlock()
 					}
 
 					if time.Now().After(end) {
@@ -163,9 +164,6 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 }
 
 func (g *Game) RemoveObject(id int) {
-	g.Lock()
-	defer g.Unlock()
-
 	for i, o := range g.Objects {
 		if o.ID == id {
 			g.Objects = append(g.Objects[:i], g.Objects[i+1:]...)
