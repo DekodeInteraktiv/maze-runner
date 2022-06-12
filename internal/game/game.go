@@ -277,6 +277,7 @@ func (g *Game) RegisterPlayer(name, styles string) *Player {
 	}
 
 	p.Abilities.BombAvailable = true
+	p.Abilities.MoveAvailable = true
 	p.Abilities.ShootAvailable = true
 
 	g.Players = append(g.Players, p)
