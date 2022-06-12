@@ -214,7 +214,7 @@ func (g *Game) runMovement() {
 }
 
 // RegisterPlayer registers a player.
-func (g *Game) RegisterPlayer(name, color string) *Player {
+func (g *Game) RegisterPlayer(name, styles string) *Player {
 	g.Lock()
 	defer g.Unlock()
 
@@ -239,7 +239,7 @@ func (g *Game) RegisterPlayer(name, color string) *Player {
 	p := &Player{
 		ID:       playerID.new(),
 		Name:     name,
-		Color:    color,
+		Styles:   styles,
 		Team:     team,
 		Token:    strings.Replace(uuid.New().String(), "-", "", -1),
 		Pos:      pos,

@@ -14,8 +14,8 @@ import (
 // playerCreate sets up a new player in a specific game.
 func (s *Server) playerCreate() http.HandlerFunc {
 	type Payload struct {
-		Name  string `json:"name"`
-		Color string `json:"color"`
+		Name   string `json:"name"`
+		Styles string `json: "styles"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +74,7 @@ func (s *Server) playerCreate() http.HandlerFunc {
 		}
 
 		// Register the player in the game.
-		p := g.RegisterPlayer(payload.Name, payload.Color)
+		p := g.RegisterPlayer(payload.Name, payload.Styles)
 
 		writeJSON(w, p, 200)
 	}

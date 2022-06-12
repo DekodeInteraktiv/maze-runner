@@ -7,8 +7,7 @@ import (
 type Player struct {
 	Name      string    `json:"name"`
 	ID        int       `json:"id"`
-	Sprite    []byte    `json:"-"`
-	Color     string    `json:"color"`
+	Styles    string    `json:"styles"`
 	Pos       *Point    `json:"pos"`
 	Token     string    `json:"token"`
 	Team      ClaimType `json:"team"`
