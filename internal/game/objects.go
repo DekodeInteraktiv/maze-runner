@@ -61,6 +61,9 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 							}
 						}
 						g.Unlock()
+
+						// Remove bomb object.
+						g.RemoveObject(o.ID)
 					}
 
 					if time.Now().After(end) {
@@ -69,9 +72,6 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 						o.Owner.Lock()
 						o.Owner.Abilities.BombAvailable = true
 						o.Owner.Unlock()
-
-						// Remove bomb object.
-						g.RemoveObject(o.ID)
 					}
 				}
 			}
