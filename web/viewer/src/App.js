@@ -68,6 +68,32 @@ function App() {
       console.error('Error:', error);
     });
   }
+  const stopRound = () => {
+    musicRef.current.pause();
+    fetch(api + `${game}/stop`, {
+      method: 'GET',
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('stop', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  }
+  const resetRound = () => {
+    musicRef.current.pause();
+    fetch(api + `${game}/reset`, {
+      method: 'GET',
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('reset', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  }
   const startGame = () => {
     fetch(api + 'create', {
       method: 'POST',
@@ -148,6 +174,8 @@ function App() {
         <PlayerArea id="1" claims={gameState.claims} players={gameState.players} password={gameState.password} />
         <div className="controls">
           {!gameState.active && <button onClick={startRound}>Start round</button>}
+          {gameState.active && <button onClick={stopRound}>Stop round</button>}
+          {gameState.active && <button onClick={resetRound}>Reset round</button>}
           <Timer timer={gameState.timer} active={gameState.active} roundTime={roundTime} />
         </div>
         <PlayerArea id="2" claims={gameState.claims} players={gameState.players} password={gameState.password} />
