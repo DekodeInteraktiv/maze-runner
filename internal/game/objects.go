@@ -51,9 +51,6 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 						g.NewAction(BombExplode, object.Pos)
 
 						g.Lock()
-						// Remove bomb object.
-						g.RemoveObject(o.ID)
-
 						// Bomb explodes and paints all tiles in 1 tile range (9 total).
 						for x := (pos.X - 2); x <= (pos.X + 2); x++ {
 							for y := (pos.Y - 2); y <= (pos.Y + 2); y++ {
@@ -63,6 +60,9 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 							}
 						}
 						g.Unlock()
+
+						// Remove bomb object.
+						g.RemoveObject(o.ID)
 
 						object.Owner.Lock()
 						object.Owner.Abilities.BombAvailable = true
