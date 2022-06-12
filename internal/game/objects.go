@@ -32,7 +32,7 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 	}
 
 	ticker := time.NewTicker(350 * time.Millisecond)
-	end := time.Now().Add(5 * time.Second)
+	end := time.Now().Add(10 * time.Second)
 
 	// Process as bomb.
 	if objectType == Bomb {
