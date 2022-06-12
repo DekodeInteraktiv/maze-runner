@@ -156,9 +156,9 @@ func (s *Server) playerMoveInstant() http.HandlerFunc {
 			return
 		}
 
-		// Check if player disabled.
+		// Check if player stunned.
 		p.RLock()
-		if p.Disabled {
+		if p.Stunned {
 			data := struct {
 				Error string
 			}{
@@ -187,7 +187,7 @@ func (s *Server) playerMoveInstant() http.HandlerFunc {
 		p.RUnlock()
 
 		// Check game is active.
-		if g.Status == game.GameRunning {
+		if g.Status != game.GameRunning {
 			data := struct {
 				Error string
 			}{
@@ -415,9 +415,9 @@ func (s *Server) playerAbilityBomb() http.HandlerFunc {
 			return
 		}
 
-		// Check if player disabled.
+		// Check if player stunned.
 		p.RLock()
-		if p.Disabled {
+		if p.Stunned {
 			data := struct {
 				Error string
 			}{
@@ -541,9 +541,9 @@ func (s *Server) playerAbilityShoot() http.HandlerFunc {
 			return
 		}
 
-		// Check if player disabled.
+		// Check if player stunned.
 		p.RLock()
-		if p.Disabled {
+		if p.Stunned {
 			data := struct {
 				Error string
 			}{

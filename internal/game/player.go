@@ -13,7 +13,7 @@ type Player struct {
 	Token     string    `json:"token"`
 	Team      ClaimType `json:"team"`
 	Abilities Abilities `json:"abilities"`
-	Disabled  bool      `json:"disabled"`
+	Stunned   bool      `json:"stunned"`
 	NextMove  string    `json:"-"`
 	sync.RWMutex
 }

@@ -131,7 +131,7 @@ func (g *Game) Start() {
 	// Start the game after 5 seconds.
 	duration := time.Duration(5) * time.Second
 	time.AfterFunc(duration, g.runGame)
-	time.AfterFunc(duration, g.runMovement)
+	//time.AfterFunc(duration, g.runMovement)
 }
 
 // Stop stops the game.
@@ -303,7 +303,7 @@ func (g *Game) PlayerStartPosition(team ClaimType) *Point {
 // PlayerHit manages the player being hit.
 func (g *Game) PlayerHit(p *Player) {
 	p.Lock()
-	p.Disabled = true
+	p.Stunned = true
 	p.Unlock()
 
 	ticker := time.NewTicker(1 * time.Second)
@@ -317,7 +317,7 @@ func (g *Game) PlayerHit(p *Player) {
 					ticker.Stop()
 
 					p.Lock()
-					p.Disabled = false
+					p.Stunned = false
 					p.Pos = g.PlayerStartPosition(p.Team)
 					p.Unlock()
 				}
