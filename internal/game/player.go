@@ -2,6 +2,7 @@ package game
 
 import (
 	"sync"
+	"time"
 )
 
 type Player struct {
@@ -75,4 +76,54 @@ func (p *Point) MoveWest() {
 
 func (p *Point) MoveEast() {
 	p.X++
+}
+
+// ShootCooldown manages the shoot cooldown.
+func (p *Player) ShootCooldown() {
+	p.Lock()
+	p.Abilities.ShootAvailable = false
+	p.Unlock()
+
+	ticker := time.NewTicker(1 * time.Second)
+	end := time.Now().Add(5 * time.Second)
+
+	go func(p *Player) {
+		for {
+			select {
+			case <-ticker.C:
+				if time.Now().After(end) {
+					ticker.Stop()
+
+					p.Lock()
+					p.Abilities.ShootAvailable = true
+					p.Unlock()
+				}
+			}
+		}
+	}(p)
+}
+
+// BombCooldown manages the bomb cooldown.
+func (p *Player) BombCooldown() {
+	p.Lock()
+	p.Abilities.BombAvailable = false
+	p.Unlock()
+
+	ticker := time.NewTicker(1 * time.Second)
+	end := time.Now().Add(10 * time.Second)
+
+	go func(p *Player) {
+		for {
+			select {
+			case <-ticker.C:
+				if time.Now().After(end) {
+					ticker.Stop()
+
+					p.Lock()
+					p.Abilities.BombAvailable = true
+					p.Unlock()
+				}
+			}
+		}
+	}(p)
 }

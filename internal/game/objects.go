@@ -35,9 +35,8 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 	if objectType == Bomb {
 		ticker := time.NewTicker(350 * time.Millisecond)
 		explode := time.Now().Add(5 * time.Second)
-		end := time.Now().Add(10 * time.Second)
 
-		go func(g *Game, o *Object, end time.Time) {
+		go func(g *Game, o *Object, explode time.Time) {
 			for {
 				select {
 				case <-g.Active:
@@ -45,6 +44,7 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 					return
 				case <-ticker.C:
 					if time.Now().After(explode) {
+						ticker.Stop()
 						// TODO: Check game is active.
 
 						g.NewAction(BombExplode, o.Pos)
@@ -66,23 +66,14 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 
 						g.Unlock()
 					}
-
-					if time.Now().After(end) {
-						ticker.Stop()
-
-						o.Owner.Lock()
-						o.Owner.Abilities.BombAvailable = true
-						o.Owner.Unlock()
-					}
 				}
 			}
-		}(g, object, end)
+		}(g, object, explode)
 	}
 
 	// Process as bullet.
 	if objectType == Bullet {
 		ticker := time.NewTicker(250 * time.Millisecond)
-		end := time.Now().Add(5 * time.Second)
 
 		go func(g *Game, o *Object) {
 			for {
@@ -91,12 +82,6 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 					ticker.Stop()
 					return
 				case <-ticker.C:
-					if time.Now().After(end) {
-						o.Owner.Lock()
-						o.Owner.Abilities.ShootAvailable = true
-						o.Owner.Unlock()
-					}
-
 					// Bullet moves
 					// Calculate the new position.
 					var newPos Point
@@ -151,7 +136,6 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 							return
 						}
 						player.RUnlock()
-
 					}
 
 					// Move to new position.

@@ -412,10 +412,8 @@ func (s *Server) playerAbilityBomb() http.HandlerFunc {
 			Y: p.Pos.Y,
 		}
 
-		// Set ability on cooldown.
-		p.Lock()
-		p.Abilities.BombAvailable = false
-		p.Unlock()
+		// Manage ability cooldown.
+		p.BombCooldown()
 
 		// Make new object and action log.
 		g.NewObject(game.Bomb, "", pos, p)
@@ -525,10 +523,8 @@ func (s *Server) playerAbilityShoot() http.HandlerFunc {
 			Y: p.Pos.Y,
 		}
 
-		// Set ability on cooldown.
-		p.Lock()
-		p.Abilities.ShootAvailable = false
-		p.Unlock()
+		// Manage ability cooldown.
+		p.ShootCooldown()
 
 		// Make new object and action log.
 		g.NewObject(game.Bullet, payload.Direction, pos, p)
