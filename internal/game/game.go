@@ -285,9 +285,6 @@ func (g *Game) RegisterPlayer(name, styles string) *Player {
 }
 
 func (g *Game) PlayerStartPosition(team ClaimType) *Point {
-	g.RLock()
-	defer g.RUnlock()
-
 	switch team {
 	case Red:
 		return &Point{X: 0, Y: 0}
