@@ -27,7 +27,7 @@ func (s *Server) webIndex() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
 		w.Header().Set("Vary", "Accept-Encoding")
-		message := "<p>Welcome to the " + s.Config.Name + "</p>" +
+		message := "<p>Welcome to " + s.Config.Name + "</p>" +
 			"<p>Version: " + s.Config.Version + "</p>" +
 			"<p>Commit:  " + s.Config.Commit + "</p>" +
 			"<p>Date:    " + s.Config.Date + "</p>"
