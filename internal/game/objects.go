@@ -31,12 +31,12 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 		Owner:     p,
 	}
 
-	ticker := time.NewTicker(350 * time.Millisecond)
-	explode := time.Now().Add(5 * time.Second)
-	end := time.Now().Add(10 * time.Second)
-
 	// Process as bomb.
 	if objectType == Bomb {
+		ticker := time.NewTicker(350 * time.Millisecond)
+		explode := time.Now().Add(5 * time.Second)
+		end := time.Now().Add(10 * time.Second)
+
 		go func(g *Game, o *Object, end time.Time) {
 			for {
 				select {
@@ -80,6 +80,9 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 
 	// Process as bullet.
 	if objectType == Bullet {
+		ticker := time.NewTicker(250 * time.Millisecond)
+		end := time.Now().Add(5 * time.Second)
+
 		go func(g *Game, o *Object) {
 			for {
 				select {
@@ -88,71 +91,69 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 					return
 				case <-ticker.C:
 					if time.Now().After(end) {
-						ticker.Stop()
-
-						// Bullet moves
-						// Calculate the new position.
-						var newPos Point
-
-						switch o.Direction {
-						case "north":
-							newPos = p.Pos.North()
-						case "south":
-							newPos = p.Pos.South()
-						case "west":
-							newPos = p.Pos.West()
-						case "east":
-							newPos = p.Pos.East()
-						}
-
-						// Check if the object is trying to move outside the maze.
-						g.RLock()
-						if newPos.X < 0 || newPos.X > (g.Size-1) || newPos.Y < 0 || newPos.Y > (g.Size-1) {
-							ticker.Stop()
-							g.RemoveObject(o.ID)
-							return
-						}
-						g.RUnlock()
-
-						// Check if the object is trying to move into a wall.
-						g.Lock()
-						if g.Maze[newPos.X][newPos.Y] == Wall {
-							ticker.Stop()
-							g.RemoveObject(o.ID)
-
-							// Claim wall tile.
-							o.Owner.RLock()
-							g.Claims[newPos.X][newPos.Y] = o.Owner.Team
-							o.Owner.RUnlock()
-							return
-						}
-						g.Unlock()
-
-						// Check if the object hits a player.
-						for _, player := range g.Players {
-							player.RLock()
-							if player.ID != p.ID && newPos == *player.Pos {
-								ticker.Stop()
-								g.NewAction(PlayerHit, pos)
-
-								g.Lock()
-								g.RemoveObject(o.ID)
-								g.Unlock()
-
-								player.RUnlock()
-								return
-							}
-							player.RUnlock()
-						}
-
-						// Move to new position.
-						o.Pos.X = newPos.X
-						o.Pos.Y = newPos.Y
-
 						o.Owner.Lock()
 						o.Owner.Abilities.ShootAvailable = true
 						o.Owner.Unlock()
 					}
+
+					// Bullet moves
+					// Calculate the new position.
+					var newPos Point
+
+					switch o.Direction {
+					case "north":
+						newPos = p.Pos.North()
+					case "south":
+						newPos = p.Pos.South()
+					case "west":
+						newPos = p.Pos.West()
+					case "east":
+						newPos = p.Pos.East()
+					}
+
+					// Check if the object is trying to move outside the maze.
+					g.RLock()
+					if newPos.X < 0 || newPos.X > (g.Size-1) || newPos.Y < 0 || newPos.Y > (g.Size-1) {
+						ticker.Stop()
+						g.RemoveObject(o.ID)
+						return
+					}
+					g.RUnlock()
+
+					// Check if the object is trying to move into a wall.
+					g.Lock()
+					if g.Maze[newPos.X][newPos.Y] == Wall {
+						ticker.Stop()
+						g.RemoveObject(o.ID)
+
+						// Claim wall tile.
+						o.Owner.RLock()
+						g.Claims[newPos.X][newPos.Y] = o.Owner.Team
+						o.Owner.RUnlock()
+						return
+					}
+					g.Unlock()
+
+					// Check if the object hits a player.
+					for _, player := range g.Players {
+						player.RLock()
+						if player.ID != p.ID && newPos == *player.Pos {
+							ticker.Stop()
+							g.NewAction(PlayerHit, pos)
+
+							g.Lock()
+							g.RemoveObject(o.ID)
+							g.Unlock()
+
+							player.RUnlock()
+							return
+						}
+						player.RUnlock()
+					}
+
+					// Move to new position.
+					o.Pos.X = newPos.X
+					o.Pos.Y = newPos.Y
 				}
 			}
 		}(g, object)
