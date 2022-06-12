@@ -52,8 +52,8 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 
 						g.Lock()
 						// Bomb explodes and paints all tiles in 1 tile range (9 total).
-						for x := (pos.X - 2); x <= (pos.X + 2); x++ {
-							for y := (pos.Y - 2); y <= (pos.Y + 2); y++ {
+						for x := (pos.X - 1); x <= (pos.X + 1); x++ {
+							for y := (pos.Y - 1); y <= (pos.Y + 1); y++ {
 								if x >= 0 && x < (g.Size-1) && y >= 0 && y < (g.Size-1) {
 									g.Claims[x][y] = object.Owner.Team
 								}
