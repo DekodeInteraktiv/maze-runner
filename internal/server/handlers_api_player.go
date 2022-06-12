@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"sync"
@@ -117,6 +118,16 @@ func (s *Server) playerMoveOld() http.HandlerFunc {
 		}
 
 		g := s.GetGameByID(gameID)
+		if g == nil {
+			data := struct {
+				Error string
+			}{
+				fmt.Sprintf("No game found with ID: %d.", gameID),
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
 
 		// Get Auth Token.
 		ctx := r.Context()
@@ -248,6 +259,16 @@ func (s *Server) playerMove() http.HandlerFunc {
 		}
 
 		g := s.GetGameByID(gameID)
+		if g == nil {
+			data := struct {
+				Error string
+			}{
+				fmt.Sprintf("No game found with ID: %d.", gameID),
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
 
 		// Get Auth Token.
 		ctx := r.Context()
@@ -323,6 +344,16 @@ func (s *Server) playerAbilityBomb() http.HandlerFunc {
 		}
 
 		g := s.GetGameByID(gameID)
+		if g == nil {
+			data := struct {
+				Error string
+			}{
+				fmt.Sprintf("No game found with ID: %d.", gameID),
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
 
 		// Get Auth Token.
 		ctx := r.Context()
@@ -426,6 +457,16 @@ func (s *Server) playerAbilityShoot() http.HandlerFunc {
 		}
 
 		g := s.GetGameByID(gameID)
+		if g == nil {
+			data := struct {
+				Error string
+			}{
+				fmt.Sprintf("No game found with ID: %d.", gameID),
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
 
 		// Get Auth Token.
 		ctx := r.Context()
@@ -498,7 +539,7 @@ func (s *Server) playerStatus() http.HandlerFunc {
 	type PlayerStatusResponse struct {
 		Name         string
 		ID           int
-		Color        string
+		Styles       string
 		Pos          *game.Point
 		Team         game.ClaimType
 		Maze         [][]game.MazeTileType `json:"maze"`
@@ -523,6 +564,16 @@ func (s *Server) playerStatus() http.HandlerFunc {
 		}
 
 		g := s.GetGameByID(gameID)
+		if g == nil {
+			data := struct {
+				Error string
+			}{
+				fmt.Sprintf("No game found with ID: %d.", gameID),
+			}
+
+			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
 
 		// Get Auth Token.
 		ctx := r.Context()
@@ -577,6 +628,7 @@ func (s *Server) playerStatus() http.HandlerFunc {
 			ID:     p.ID,
 			Pos:    p.Pos,
 			Team:   p.Team,
+			Styles: p.Styles,
 			Maze:   maze,
 			Claims: claims,
 		}
