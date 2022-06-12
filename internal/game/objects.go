@@ -105,31 +105,39 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 							newPos = p.Pos.East()
 						}
 
-						// Check if the player is trying to move outside the maze.
+						// Check if the object is trying to move outside the maze.
 						g.RLock()
 						if newPos.X < 0 || newPos.X > (g.Size-1) || newPos.Y < 0 || newPos.Y > (g.Size-1) {
 							ticker.Stop()
-							// TODO: Delete object.
+							g.RemoveObject(o.ID)
 							return
 						}
 						g.RUnlock()
 
-						// Check if the player is trying to move into a wall.
-						g.RLock()
+						// Check if the object is trying to move into a wall.
+						g.Lock()
 						if g.Maze[newPos.X][newPos.Y] == Wall {
 							ticker.Stop()
-							// TODO: Delete object.
+							g.RemoveObject(o.ID)
+
+							// Claim wall tile.
+							o.Owner.RLock()
+							g.Claims[newPos.X][newPos.Y] = o.Owner.Team
+							o.Owner.RUnlock()
 							return
 						}
-						g.RUnlock()
+						g.Unlock()
 
-						// Check if another player is already in the new position.
+						// Check if the object hits a player.
 						for _, player := range g.Players {
 							player.RLock()
 							if player.ID != p.ID && newPos == *player.Pos {
 								ticker.Stop()
 								g.NewAction(PlayerHit, pos)
-								// TODO: Delete object.
+
+								g.Lock()
+								g.RemoveObject(o.ID)
+								g.Unlock()
 
 								player.RUnlock()
 								return
@@ -138,12 +146,12 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 						}
 
 						// Move to new position.
-						object.Pos.X = newPos.X
-						object.Pos.Y = newPos.Y
+						o.Pos.X = newPos.X
+						o.Pos.Y = newPos.Y
 
-						object.Owner.Lock()
-						object.Owner.Abilities.ShootAvailable = true
-						object.Owner.Unlock()
+						o.Owner.Lock()
+						o.Owner.Abilities.ShootAvailable = true
+						o.Owner.Unlock()
 					}
 				}
 			}
