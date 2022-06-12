@@ -2,8 +2,11 @@ package server
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/PeterBooker/maze-game-server/internal/assets"
+	"github.com/didip/tollbooth/v6"
+	"github.com/didip/tollbooth/v6/limiter"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 )
@@ -98,6 +101,9 @@ func (s *Server) apiRoutes() chi.Router {
 			r.Get("/tile/gift", s.gameTileGift())
 
 			r.Route("/player", func(r chi.Router) {
+				limiter := tollbooth.NewLimiter(10, &limiter.ExpirableOptions{DefaultExpirationTTL: time.Minute * 5})
+				r.Use(RateLimiter(limiter))
+
 				r.Post("/register/{password}", s.playerCreate())
 
 				r.Post("/move", s.playerMove())

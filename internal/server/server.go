@@ -10,8 +10,6 @@ import (
 	"github.com/PeterBooker/maze-game-server/internal/client"
 	"github.com/PeterBooker/maze-game-server/internal/config"
 	"github.com/PeterBooker/maze-game-server/internal/game"
-	"github.com/didip/tollbooth/v6"
-	"github.com/didip/tollbooth/v6/limiter"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -80,9 +78,6 @@ func (s *Server) Setup() {
 	s.Router.Use(middleware.RedirectSlashes)
 	s.Router.Use(middleware.Timeout(5 * time.Second))
 	s.Router.Use(s.VerifyToken())
-
-	limiter := tollbooth.NewLimiter(50, &limiter.ExpirableOptions{DefaultExpirationTTL: time.Minute * 5})
-	s.Router.Use(RateLimiter(limiter))
 
 	s.Router.Use(cors.Handler(cors.Options{
 		AllowOriginFunc: func(r *http.Request, origin string) bool {
