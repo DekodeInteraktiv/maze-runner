@@ -113,13 +113,14 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 					}
 
 					// Check if the object is trying to move outside the maze.
-					g.RLock()
+					g.Lock()
 					if newPos.X < 0 || newPos.X > (g.Size-1) || newPos.Y < 0 || newPos.Y > (g.Size-1) {
 						ticker.Stop()
 						g.RemoveObject(o.ID)
+						g.Unlock()
 						return
 					}
-					g.RUnlock()
+					g.Unlock()
 
 					// Check if the object is trying to move into a wall.
 					g.Lock()
@@ -131,6 +132,7 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 						o.Owner.RLock()
 						g.Claims[newPos.X][newPos.Y] = o.Owner.Team
 						o.Owner.RUnlock()
+						g.Unlock()
 						return
 					}
 					g.Unlock()
@@ -138,18 +140,18 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 					// Check if the object hits a player.
 					for _, player := range g.Players {
 						player.RLock()
-						if player.ID != p.ID && newPos == *player.Pos {
+						if player.ID != o.Owner.ID && newPos == *player.Pos {
 							ticker.Stop()
 							g.NewAction(PlayerHit, pos)
 
 							g.Lock()
 							g.RemoveObject(o.ID)
 							g.Unlock()
-
 							player.RUnlock()
 							return
 						}
 						player.RUnlock()
+
 					}
 
 					// Move to new position.
@@ -163,6 +165,7 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 	g.Objects = append(g.Objects, object)
 }
 
+// RemoveObject removes an object from the game.
 func (g *Game) RemoveObject(id int) {
 	for i, o := range g.Objects {
 		if o.ID == id {
