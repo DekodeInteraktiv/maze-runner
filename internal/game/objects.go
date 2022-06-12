@@ -46,12 +46,17 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 					if time.Now().After(end) {
 						ticker.Stop()
 
+						// TODO: Check game is active.
+
 						g.NewAction(BombExplode, object.Pos)
 
 						g.Lock()
+						// Remove bomb object.
+						g.RemoveObject(o.ID)
+
 						// Bomb explodes and paints all tiles in 1 tile range (9 total).
-						for x := (pos.X - 2); x < (pos.X + 2); x++ {
-							for y := (pos.Y - 2); y < (pos.Y + 2); y++ {
+						for x := (pos.X - 2); x <= (pos.X + 2); x++ {
+							for y := (pos.Y - 2); y <= (pos.Y + 2); y++ {
 								if x >= 0 && x < (g.Size-1) && y >= 0 && y < (g.Size-1) {
 									g.Claims[x][y] = object.Owner.Team
 								}
@@ -141,4 +146,16 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 	}
 
 	g.Objects = append(g.Objects, object)
+}
+
+func (g *Game) RemoveObject(id int) {
+	g.Lock()
+	defer g.Unlock()
+
+	for i, o := range g.Objects {
+		if o.ID == id {
+			g.Objects = append(g.Objects[:i], g.Objects[i+1:]...)
+			return
+		}
+	}
 }
