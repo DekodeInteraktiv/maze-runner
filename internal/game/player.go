@@ -133,7 +133,7 @@ func (p *Player) BombCooldown() {
 // MoveCooldown manages the bomb cooldown.
 func (p *Player) MoveCooldown() {
 	p.Lock()
-	p.Abilities.BombAvailable = false
+	p.Abilities.MoveAvailable = false
 	p.Unlock()
 
 	ticker := time.NewTicker(1 * time.Second)
