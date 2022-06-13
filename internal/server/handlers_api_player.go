@@ -608,7 +608,7 @@ func (s *Server) playerStatus() http.HandlerFunc {
 	type PlayerStatusResponse struct {
 		Name         string
 		ID           int
-		Styles       string
+		Styles       game.Styles
 		Pos          *game.Point
 		Team         game.ClaimType
 		Maze         [][]game.MazeTileType `json:"maze"`
