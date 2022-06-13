@@ -147,7 +147,7 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 							player.RUnlock()
 
 							ticker.Stop()
-							g.NewAction(PlayerHit, pos)
+							g.NewAction(PlayerHit, &newPos)
 							g.PlayerHit(player)
 
 							g.Lock()
