@@ -94,8 +94,8 @@ func (p *Player) ShootCooldown() {
 	p.Abilities.ShootAvailable = false
 	p.Unlock()
 
-	ticker := time.NewTicker(1 * time.Second)
-	end := time.Now().Add(5 * time.Second)
+	ticker := time.NewTicker(500 * time.Millisecond)
+	end := time.Now().Add(3 * time.Second)
 
 	go func(p *Player) {
 		for {
@@ -144,8 +144,8 @@ func (p *Player) MoveCooldown() {
 	p.Abilities.MoveAvailable = false
 	p.Unlock()
 
-	ticker := time.NewTicker(350 * time.Millisecond)
-	end := time.Now().Add(350 * time.Millisecond)
+	ticker := time.NewTicker(50 * time.Millisecond)
+	end := time.Now().Add(200 * time.Millisecond)
 
 	go func(p *Player) {
 		for {
