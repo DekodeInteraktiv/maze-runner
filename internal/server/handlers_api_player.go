@@ -606,11 +606,11 @@ func (s *Server) playerAbilityShoot() http.HandlerFunc {
 // playerStatus gives the status of a player.
 func (s *Server) playerStatus() http.HandlerFunc {
 	type PlayerStatusResponse struct {
-		Name         string
-		ID           int
-		Styles       game.Styles
-		Pos          *game.Point
-		Team         game.ClaimType
+		Name         string                `json:"name"`
+		ID           int                   `json:"id"`
+		Styles       game.Styles           `json:"styles"`
+		Pos          *game.Point           `json:"pos"`
+		Team         game.ClaimType        `json:"team"`
 		Maze         [][]game.MazeTileType `json:"maze"`
 		Claims       [][]game.ClaimType    `json:"claims"`
 		sync.RWMutex `json:"-"`
