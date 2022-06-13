@@ -154,6 +154,8 @@ func (g *Game) runGame() {
 	ticker := time.NewTicker(1 * time.Second)
 
 	go func(g *Game) {
+		warning := false
+
 		for {
 			select {
 			case <-g.Active:
@@ -163,8 +165,9 @@ func (g *Game) runGame() {
 				g.Timer++
 				g.Unlock()
 
-				if g.Timer >= (g.TimeLimit - 15) {
+				if !warning && g.Timer >= (g.TimeLimit-15) {
 					g.NewAction(GameEndWarning, nil)
+					warning = true
 				}
 
 				if g.Timer >= g.TimeLimit {
