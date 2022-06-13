@@ -244,7 +244,7 @@ func (g *Game) runMovement() {
 }
 
 // RegisterPlayer registers a player.
-func (g *Game) RegisterPlayer(name, styles string) *Player {
+func (g *Game) RegisterPlayer(name string, styles Styles) *Player {
 	g.Lock()
 	defer g.Unlock()
 

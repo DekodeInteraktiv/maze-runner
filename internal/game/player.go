@@ -8,7 +8,7 @@ import (
 type Player struct {
 	Name      string    `json:"name"`
 	ID        int       `json:"id"`
-	Styles    string    `json:"styles"`
+	Styles    Styles    `json:"styles"`
 	Pos       *Point    `json:"pos"`
 	Token     string    `json:"token"`
 	Team      ClaimType `json:"team"`
@@ -16,6 +16,14 @@ type Player struct {
 	Stunned   bool      `json:"stunned"`
 	NextMove  string    `json:"-"`
 	sync.RWMutex
+}
+
+type Styles struct {
+	Head string `json:"head"`
+	Body string `json:"body"`
+	Feet string `json:"feet"`
+	Foot string `json:"foot"`
+	Arm  string `json:"arm"`
 }
 
 type Abilities struct {
