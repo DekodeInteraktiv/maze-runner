@@ -1,5 +1,5 @@
-const Timer = ({timer, active, roundTime}) => {
-  if(!timer || !active) {
+const Timer = ({timer, status, roundTime}) => {
+  if(!timer || status !== 'running') {
     return null;
   } else {
     let time = roundTime - timer;

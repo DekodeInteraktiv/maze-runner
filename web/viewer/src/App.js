@@ -6,6 +6,7 @@ import {
 import Maze from './components/Maze';
 import Object from './components/Object';
 import PlayerArea from './components/PlayerArea';
+import Log from './components/Log';
 import Timer from './components/Timer';
 import logo from './logo.png';
 import './App.css';
@@ -123,7 +124,7 @@ function App() {
   useEffect(() => {
     if(game) {
       updateGameState();
-      setInterval(updateGameState, 80);
+      setInterval(updateGameState, 100);
     }
   },[game]);
 
@@ -156,10 +157,12 @@ function App() {
     return null;
   }
 
+  const active = (gameState.status === 'running');
+
   let {maze} = gameState;
   return (
     <div className="App">
-      <Music game={game} active={gameState.active} musicRef={musicRef} />
+      <Music game={game} active={active} musicRef={musicRef} />
       <style>{`body{--map-X: ${size};--map-Y: ${size};}`}</style>
       <div className="app-head">
         <PlayerArea id="3" claims={gameState.claims} players={gameState.players} password={gameState.password} />
@@ -169,14 +172,15 @@ function App() {
         </div>
         <PlayerArea id="4" claims={gameState.claims} players={gameState.players} password={gameState.password} />
       </div>
+      <Log log={gameState.log} />
       <Maze maze={maze} log={gameState.log} claims={gameState.claims} objects={gameState.objects} countDown={countDown} players={gameState.players}/>
       <div className="app-foot">
         <PlayerArea id="1" claims={gameState.claims} players={gameState.players} password={gameState.password} />
         <div className="controls">
-          {!gameState.active && <button onClick={startRound}>Start round</button>}
-          {gameState.active && <button onClick={stopRound}>Stop round</button>}
-          {gameState.active && <button onClick={resetRound}>Reset round</button>}
-          <Timer timer={gameState.timer} active={gameState.active} roundTime={roundTime} />
+          {!active && <button onClick={startRound}>Start round</button>}
+          {active && <button onClick={stopRound}>Stop round</button>}
+          {active && <button onClick={resetRound}>Reset round</button>}
+          <Timer timer={gameState.timer} status={gameState.status} roundTime={roundTime} />
         </div>
         <PlayerArea id="2" claims={gameState.claims} players={gameState.players} password={gameState.password} />
       </div>

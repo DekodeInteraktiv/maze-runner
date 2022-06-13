@@ -1,51 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
 
 body {
 	background-color: #282c34;
 	color: #fff;
-	font-family: 'VT323', monospace;
+	font-family: "VT323", monospace;
 
 	--panel-size: 12vh;
 	--map-size: calc(100vh - var(--panel-size) * 2);
 	--map-X: 50;
 	--map-Y: 50;
 	--blue: #ff9100;
-	--pixelated-small: polygon(
-    0px 2px,
-    2px 2px,
-    2px 0px,
-    calc(100% - 2px) 0px,
-    calc(100% - 2px) 2px,
-    100% 2px,
-    100% calc(100% - 2px),
-    calc(100% - 2px) calc(100% - 2px),
-    calc(100% - 2px) 100%,
-    2px 100%,
-    2px calc(100% - 2px),
-    0px calc(100% - 2px)
-  );
-	--pixelated: polygon(
-    0px 8px,
-    4px 8px,
-    4px 4px,
-    8px 4px,
-    8px 0px,
-    calc(100% - 8px) 0px,
-    calc(100% - 8px) 4px,
-    calc(100% - 4px) 4px,
-    calc(100% - 4px) 8px,
-    100% 8px,
-    100% calc(100% - 8px),
-    calc(100% - 4px) calc(100% - 8px),
-    calc(100% - 4px) calc(100% - 4px),
-    calc(100% - 8px) calc(100% - 4px),
-    calc(100% - 8px) 100%,
-    8px 100%,
-    8px calc(100% - 4px),
-    4px calc(100% - 4px),
-    4px calc(100% - 8px),
-    0px calc(100% - 8px)
-  );
+	--pixelated-small: polygon(0 2px, 2px 2px, 2px 0, calc(100% - 2px) 0, calc(100% - 2px) 2px, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 2px calc(100% - 2px), 0 calc(100% - 2px));
+	--pixelated: polygon(0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px));
 }
 
 * {
@@ -54,33 +20,33 @@ body {
 
 .app-head,
 .app-foot {
-	height: var(--panel-size);
+	align-items: center;
 	display: flex;
+	height: var(--panel-size);
 	justify-content: space-between;
 	padding: 10px 20px;
-	align-items: center;
 }
 
 .map {
+	display: flex;
 	height: var(--map-size);
 	margin: 0 auto;
-	width: var(--map-size);
 	position: relative;
-	display: flex;
+	width: var(--map-size);
 }
 
 .map::before {
-	display: block;
-	position: absolute;
-	content: "";
 	background: rgba(40, 44, 52, 0.8);
-	width: 100%;
+	content: "";
+	display: block;
 	height: 100%;
-	top: 0;
 	left: 0;
-	z-index: 50;
 	opacity: 0;
+	position: absolute;
+	top: 0;
 	transition: all 250ms;
+	width: 100%;
+	z-index: 50;
 }
 
 .map.countdown::before {
@@ -88,25 +54,25 @@ body {
 }
 
 .map .countdown {
-	display: block;
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
-	z-index: 60;
-	display: flex;
 	align-items: center;
-	justify-content: center;
 	animation: colorIn 400ms;
+	display: block;
+	display: flex;
 	font-size: 50vh;
+	height: 100%;
+	justify-content: center;
+	left: 0;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 60;
 }
 
 .row {
 	display: flex;
-	width: calc( var(--map-size) / var(--map-X) );
-	flex-wrap: wrap;
 	flex-direction: column-reverse;
+	flex-wrap: wrap;
+	width: calc(var(--map-size) / var(--map-X));
 }
 
 .cell {
@@ -114,10 +80,10 @@ body {
 	border-bottom: 0;
 	color: black;
 	display: flex;
-	height: calc( var(--map-size) / var(--map-Y) );
+	height: calc(var(--map-size) / var(--map-Y));
 	justify-content: center;
 	position: relative;
-	width: calc( var(--map-size) / var(--map-X) );
+	width: calc(var(--map-size) / var(--map-X));
 }
 
 .cell:first-child {
@@ -144,6 +110,7 @@ body {
 
 .obstacle {
 	background: url("https://s3.amazonaws.com/spoonflower/public/design_thumbnails/0396/3573/rbricks_large_shop_thumb.png");
+	background: black;
 	background-size: cover;
 	border-radius: 0;
 	height: 100%;
@@ -151,13 +118,35 @@ body {
 	top: 0;
 	width: 100%;
 	z-index: 2;
-	background: black;
+}
+
+.log {
+	align-items: center;
+	animation: promptIn 2000ms both;
+	display: flex;
+	font-size: 14vw;
+	height: var(--map-size);
+	justify-content: center;
+	left: 0;
+	position: absolute;
+	text-shadow: 1vw 1vw 0 #000;
+	width: 100vw;
+	z-index: 10;
+}
+
+.log span {
+	font-size: 14vw;
+	text-shadow: 1vw 1vw 0 #000;
+}
+
+.color + .obstacle {
+	opacity: 0.8;
 }
 
 .flicker {
 	animation: flicker 1000ms;
-	animation-timing-function: steps(2, jump-start);
 	animation-iteration-count: infinite;
+	animation-timing-function: steps(2, jump-start);
 }
 
 .color {
@@ -212,12 +201,12 @@ body {
 }
 
 .player-area {
+	background: #3d434f;
+	clip-path: var(--pixelated);
 	display: flex;
 	flex-direction: column;
-	background: #3d434f;
-	padding: 1vh 2vh;
-	clip-path: var(--pixelated);
 	min-width: 300px;
+	padding: 1vh 2vh;
 }
 
 .player-area .name {
@@ -229,125 +218,162 @@ body {
 }
 
 .bullet {
+	background: radial-gradient(circle, rgba(255, 198, 0, 1) 0%, rgba(236, 99, 19, 1) 35%, rgba(254, 255, 0, 1) 100%);
+	clip-path: var(--pixelated);
+	height: 60%;
 	position: absolute;
+	width: 60%;
 	z-index: 40;
-	width: 30%;
-	height: 20%;
-	background: gold;
-	animation: colorIn 300ms;
-}
-
-.bullet::after {
-	width: 40%;
-	height: 100%;
-	position: absolute;
-	top: 0;
-	right: -40%;
-	background: orange;
-	content: "";
-	border-top-right-radius: 100%;
-	border-bottom-right-radius: 100%;
 }
 
 .bomb {
-	width: 45%;
-  height: 45%;
-  position: absolute;
-  background: black;
-  z-index: 2;
-  border-radius: 100%;
 	animation: pulse 400ms;
 	animation-iteration-count: infinite;
+	background: black;
+	border-radius: 100%;
+	height: 45%;
+	position: absolute;
+	width: 45%;
+	z-index: 2;
 }
 
 .bomb::before {
+	background: white;
+	content: "";
+	height: 10%;
+	left: 44%;
 	position: absolute;
 	top: -10%;
 	width: 12%;
-	height: 10%;
-	background: white;
-	content: "";
-	left: 44%;
 }
 
 .bomb::after {
+	background: yellow;
+	content: "";
+	height: 10%;
+	left: 40%;
 	position: absolute;
 	top: -20%;
 	width: 20%;
-	height: 10%;
-	background: yellow;
-	content: "";
-	left: 40%;
 }
 
-.bomb-explode {
- --star-color:orange;
- margin:1em auto;
- font-size:calc( var(--map-size) / var(--map-X) * 2);
- position: relative;
- display: block;
- width: 0px;
- height: 0px;
- border-right: 1em solid transparent;
- border-bottom: 0.7em solid var(--star-color);
- border-left: 1em solid transparent;
- transform: rotate(35deg);
- z-index: 20;
- animation: explode 1000ms both;
+.shot-hit {
+	animation: expand 400ms both;
+	background: radial-gradient(circle, rgba(255, 198, 0, 1) 0%, rgba(236, 99, 19, 1) 35%, rgba(254, 255, 0, 1) 100%);
+	clip-path: var(--pixelated);
+	height: 60%;
+	position: absolute;
+	width: 60%;
+	z-index: 40;
 }
-.bomb-explode:before {
- border-bottom: 0.8em solid var(--star-color);
- border-left: 0.3em solid transparent;
- border-right: 0.3em solid transparent;
- position: absolute;
- height: 0;
- width: 0;
- top: -0.45em;
- left: -0.65em;
- display: block;
- content:"";
- transform: rotate(-35deg);
+
+.bomb-explode,
+.player-kill {
+	--star-color: orange;
+	animation: explode 1000ms both;
+	border-bottom: 0.7em solid var(--star-color);
+	border-left: 1em solid transparent;
+	border-right: 1em solid transparent;
+	display: block;
+	font-size: calc(var(--map-size) / var(--map-X) * 2);
+	height: 0;
+	margin: 1em auto;
+	position: relative;
+	position: absolute;
+	transform: rotate(35deg);
+	width: 0;
+	z-index: 20;
 }
-.bomb-explode:after {
- position: absolute;
- display: block;
- top: 0.03em;
- left: -1.05em;
- width: 0;
- height: 0;
- border-right: 1em solid transparent;
- border-bottom: 0.7em solid var(--star-color);
- border-left: 1em solid transparent;
- transform: rotate(-70deg);
- content:"";
+
+.bomb-explode::before,
+.player-kill::before {
+	border-bottom: 0.8em solid var(--star-color);
+	border-left: 0.3em solid transparent;
+	border-right: 0.3em solid transparent;
+	content: "";
+	display: block;
+	height: 0;
+	left: -0.65em;
+	position: absolute;
+	top: -0.45em;
+	transform: rotate(-35deg);
+	width: 0;
+}
+
+.bomb-explode::after,
+.player-kill::after {
+	border-bottom: 0.7em solid var(--star-color);
+	border-left: 1em solid transparent;
+	border-right: 1em solid transparent;
+	content: "";
+	display: block;
+	height: 0;
+	left: -1.05em;
+	position: absolute;
+	top: 0.03em;
+	transform: rotate(-70deg);
+	width: 0;
 }
 
 .player {
 	align-items: center;
+	animation-iteration-count: infinite;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	z-index: 3;
-	width: 100%;
 	height: 100%;
+	justify-content: center;
 	overflow: hidden;
-	/* animation: dance 400ms; */
-	animation-iteration-count: infinite;
+	width: 100%;
+	z-index: 3;
 }
 
 .player-head {
 	background: #d8d3c3;
-	width: 20%;
 	height: 20%;
+	width: 20%;
 }
 
 .player-body {
 	background: teal;
-	max-height: 30px;
-	max-width: 40px;
-	width: 50%;
 	height: 30%;
 	position: relative;
+	width: 50%;
+}
+
+.player-feet {
+	height: 8%;
+	position: relative;
+	width: 42%;
+}
+
+.player-arm,
+.player-foot {
+	background: #d8d3c3;
+	display: block;
+	left: 0;
+	position: absolute;
+	top: 0;
+}
+
+.player-foot {
+	height: 100%;
+	width: 20%;
+}
+
+.player-arm {
+	height: 35%;
+	left: -20%;
+	width: 20%;
+}
+
+.player-foot:last-child {
+	left: auto;
+	right: 0;
+}
+
+.player-arm:last-child {
+	left: auto;
+	right: -20%;
 }
 
 .player-1 .player-body {
@@ -362,65 +388,24 @@ body {
 	background: blue;
 }
 
-.player-feet {
-	width: 42%;
-	height: 8%;
-	position: relative;
-}
-
-.player-feet::before,
-.player-feet::after,
-.player-body::before,
-.player-body::after {
-	position: absolute;
-	content: "";
-	display: block;
-	background: #d8d3c3;
-	left: 0;
-	top: 0;
-}
-
-.player-feet::before,
-.player-feet::after {
-	height: 100%;
-	width: 20%;
-}
-
-.player-body::before,
-.player-body::after {
-	height: 35%;
-	width: 20%;
-	left: -20%;
-}
-
-.player-feet::after {
-	left: auto;
-	right: 0;
-}
-
-.player-body::after {
-	left: auto;
-	right: -20%;
-}
-
 button {
 	background: transparent;
+	border: 0;
 	color: #fff;
-	font-family: 'VT323', monospace;
+	cursor: pointer;
+	font-family: "VT323", monospace;
 	font-size: 3vh;
 	padding: 1vh 2vh;
-	cursor: pointer;
 	position: relative;
-	border: 0;
 }
 
 button:hover {
-	background: rgba(255,255,255,0.2)
+	background: rgba(255, 255, 255, 0.2);
 }
 
 .select-screen {
-	display: flex;
 	align-items: center;
+	display: flex;
 	flex-direction: column;
 	height: 100vh;
 	justify-content: center;
@@ -433,10 +418,10 @@ button:hover {
 }
 
 .intro-players .player {
-	width: 9vh;
-	height: 9vh;
 	animation: dance 400ms;
 	animation-iteration-count: infinite;
+	height: 9vh;
+	width: 9vh;
 }
 
 .intro-players .player:nth-child(1) .player-body {
@@ -446,6 +431,7 @@ button:hover {
 .intro-players .player:nth-child(2) {
 	animation-delay: 100ms;
 }
+
 .intro-players .player:nth-child(2) .player-body {
 	background: var(--blue);
 }
@@ -453,6 +439,7 @@ button:hover {
 .intro-players .player:nth-child(3) {
 	animation-delay: 200ms;
 }
+
 .intro-players .player:nth-child(3) .player-body {
 	background: green;
 }
@@ -460,14 +447,15 @@ button:hover {
 .intro-players .player:nth-child(4) {
 	animation-delay: 300ms;
 }
+
 .intro-players .player:nth-child(4) .player-body {
 	background: pink;
 }
 
 .select-screen .app-head,
 .select-screen .app-foot {
-	justify-content: center;
 	height: auto;
+	justify-content: center;
 }
 
 .select-screen .branding img {
@@ -484,10 +472,10 @@ button:hover {
 }
 
 .select-screen .controls button:first-child::before {
-	content: "> ";
 	animation: flicker 800ms;
-	animation-timing-function: steps(2, jump-start);
 	animation-iteration-count: infinite;
+	animation-timing-function: steps(2, jump-start);
+	content: "> ";
 }
 
 @keyframes colorIn {
@@ -500,15 +488,46 @@ button:hover {
 	}
 }
 
+@keyframes promptIn {
+	0% {
+		opacity: 1;
+		transform: scale(0.1);
+	}
+
+	50% {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	100% {
+		opacity: 0;
+		transform: scale(0.1);
+	}
+}
+
 @keyframes explode {
 	from {
-		transform: scale(0.01) rotate(35deg);
 		opacity: 1;
+		transform: scale(0.01) rotate(35deg);
 	}
 
 	to {
-		transform: scale(1) rotate(35deg);
 		opacity: 0;
+		transform: scale(1) rotate(35deg);
+	}
+}
+
+@keyframes expand {
+	from {
+		height: 40%;
+		opacity: 1;
+		width: 40%;
+	}
+
+	to {
+		height: 100%;
+		opacity: 0;
+		width: 100%;
 	}
 }
 
@@ -523,7 +542,8 @@ button:hover {
 }
 
 @keyframes dance {
-	0%, 100% {
+	0%,
+	100% {
 		transform: rotate(-10deg);
 	}
 
@@ -533,7 +553,8 @@ button:hover {
 }
 
 @keyframes pulse {
-	0%, 100% {
+	0%,
+	100% {
 		transform: scale(1);
 	}
 

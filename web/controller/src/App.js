@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 const api = 'https://maze.peterbooker.com/api/v1/game/';
 
@@ -7,6 +7,13 @@ function App() {
   const [pw, setPw] = useState("");
   const [name, setName] = useState("");
   const [auth, setAuth] = useState(false);
+  useEffect(() => {
+    if(auth) {
+      setInterval(() => {
+        info();
+      }, 500);
+    }
+  },[auth])
   const register = () => {
     fetch(api + id + '/player/register/' + pw, {
       method: 'POST',
@@ -16,6 +23,22 @@ function App() {
     .then(data => {
       console.log('Registred game', data);
       setAuth(data.token);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  };
+  const info = () => {
+    var headers = new Headers();
+    headers.append("Authorization", "Bearer " + auth);
+    headers.append("Content-Type", "application/json");
+    fetch(api + id + '/player/status', {
+      method: 'GET',
+      headers: headers
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Info', data);
     })
     .catch((error) => {
       console.error('Error:', error);
