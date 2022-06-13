@@ -75,6 +75,24 @@ func (g *Game) NewObject(objectType ObjectType, direction string, pos *Point, p 
 	if objectType == Bullet {
 		ticker := time.NewTicker(250 * time.Millisecond)
 
+		// Calculate the starting position.
+		var newPos Point
+
+		switch direction {
+		case "north":
+			newPos = pos.North()
+		case "south":
+			newPos = pos.South()
+		case "west":
+			newPos = pos.West()
+		case "east":
+			newPos = pos.East()
+		}
+
+		// Set new position.
+		object.Pos.X = newPos.X
+		object.Pos.Y = newPos.Y
+
 		go func(g *Game, o *Object) {
 			for {
 				select {
