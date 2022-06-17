@@ -49,9 +49,7 @@ func (s *Server) routes() {
 	})
 
 	// Leaderboard App
-	leaderboardCreds := map[string]string{"leaderboard": "d3kode"}
 	s.Router.Group(func(r chi.Router) {
-		r.Use(middleware.BasicAuth("leaderboard", leaderboardCreds))
 		r.Get("/leaderboard", s.leaderboardIndex())
 		r.Get("/leaderboard/", s.leaderboardIndex())
 		r.Get("/leaderboard/favicon.ico", s.leaderboardFavicon())
@@ -64,9 +62,7 @@ func (s *Server) routes() {
 	})
 
 	// Register App
-	registerCreds := map[string]string{"register": "d3kode"}
 	s.Router.Group(func(r chi.Router) {
-		r.Use(middleware.BasicAuth("register", registerCreds))
 		r.Get("/register", s.registerIndex())
 		r.Get("/register/", s.registerIndex())
 		r.Get("/register/favicon.ico", s.registerFavicon())
