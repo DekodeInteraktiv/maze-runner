@@ -1,6 +1,6 @@
 import SoundBoard from './SoundBoard';
 
-const Object = ({object}) => {
+const Object = ({object, players}) => {
   if(!object) {
     return null;
   }
@@ -34,16 +34,17 @@ const Object = ({object}) => {
           return null;
       }
     case 'player':
+    const styles = players[object.id].styles;
       return (
         <div className={`player player-${object.id}`}>
-          <div className="player-head"></div>
-          <div className="player-body">
-            <div className="player-arm"></div>
-            <div className="player-arm"></div>
+          <div style={{cssText:styles.head}} className="player-head"></div>
+          <div style={{cssText:styles.body}} className="player-body">
+            <div style={{cssText:styles.arm}} className="player-arm"></div>
+            <div style={{cssText:styles.arm}} className="player-arm"></div>
           </div>
-          <div className="player-feet">
-            <div className="player-foot"></div>
-            <div className="player-foot"></div>
+          <div style={{cssText:styles.feet}} className="player-feet">
+            <div style={{cssText:styles.foot}} className="player-foot"></div>
+            <div style={{cssText:styles.foot}} className="player-foot"></div>
           </div>
           <SoundBoard.Move1 />
         </div>

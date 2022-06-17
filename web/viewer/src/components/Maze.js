@@ -46,7 +46,7 @@ const Cell = ({coords, players = [], cell, claims, objects, log}) => {
   return (
     <div className={`cell`} >
       <Color color={claims[coords.X][coords.Y]} />
-      <Object object={object} />
+      <Object object={object} players={players} />
       <Object object={prop} />
       <Object object={logEvent} />
     </div>
