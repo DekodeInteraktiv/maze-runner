@@ -98,7 +98,7 @@ function App() {
   const startGame = () => {
     fetch(api + 'create', {
       method: 'POST',
-      body: JSON.stringify({size: size, distribution: -0.3, timelimit: roundTime})
+      body: JSON.stringify({size: size, distribution: -0.3, timelimit: roundTime, key:'SjqjcN81Shq77nqwLL'})
     })
     .then(response => response.json())
     .then(data => {
