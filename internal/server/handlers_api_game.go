@@ -18,6 +18,7 @@ func (s *Server) gameCreate() http.HandlerFunc {
 		Distribution float64 `json:"distribution"`
 		TimeLimit    uint    `json:"timelimit"`
 		Key          string  `json:"key"`
+		Protected    bool    `json:"protected"`
 	}
 
 	type CreateGameResponse struct {
@@ -28,6 +29,7 @@ func (s *Server) gameCreate() http.HandlerFunc {
 		Timer        uint                  `json:"timer"`
 		TimeLimit    uint                  `json:"time_limit"`
 		Active       chan bool             `json:"-"`
+		Protected    bool                  `json:"-"`
 		Players      []*game.Player        `json:"players"`
 		Size         int                   `json:"size"`
 		Maze         [][]game.MazeTileType `json:"maze"`
@@ -73,7 +75,7 @@ func (s *Server) gameCreate() http.HandlerFunc {
 			return
 		}
 
-		g := s.CreateGame(payload.Size, payload.Distribution, payload.TimeLimit)
+		g := s.CreateGame(payload.Size, payload.Distribution, payload.TimeLimit, payload.Protected)
 
 		g.RLock()
 		defer g.RUnlock()
@@ -93,6 +95,7 @@ func (s *Server) gameStatus() http.HandlerFunc {
 		Timer        uint                  `json:"timer"`
 		TimeLimit    uint                  `json:"time_limit"`
 		Active       chan bool             `json:"-"`
+		Protected    bool                  `json:"-"`
 		Players      []*game.Player        `json:"players"`
 		Size         int                   `json:"size"`
 		Maze         [][]game.MazeTileType `json:"maze"`
@@ -140,6 +143,19 @@ func (s *Server) gameStatus() http.HandlerFunc {
 			return
 		}
 
+		// Protect Games if needed.
+		protected := r.Header.Get("Protected")
+		if "Protected" != protected {
+			data := struct {
+				Error string
+			}{
+				"Sorry, this is a protected endpoint.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
+			return
+		}
+
 		g.RLock()
 		defer g.RUnlock()
 		newGame := (*StatusGameResponse)(g)
@@ -175,6 +191,19 @@ func (s *Server) gameStart() http.HandlerFunc {
 			}
 
 			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
+
+		// Protect Games if needed.
+		protected := r.Header.Get("Protected")
+		if g.Protected && "Protected" != protected {
+			data := struct {
+				Error string
+			}{
+				"Sorry, this is a protected game.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
 			return
 		}
 
@@ -221,6 +250,19 @@ func (s *Server) gameReset() http.HandlerFunc {
 			return
 		}
 
+		// Protect Games if needed.
+		protected := r.Header.Get("Protected")
+		if g.Protected && "Protected" != protected {
+			data := struct {
+				Error string
+			}{
+				"Sorry, this is a protected game.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
+			return
+		}
+
 		g.Reset()
 
 		data := struct {
@@ -259,6 +301,19 @@ func (s *Server) gameStop() http.HandlerFunc {
 			}
 
 			writeJSON(w, data, http.StatusNotFound)
+			return
+		}
+
+		// Protect Games if needed.
+		protected := r.Header.Get("Protected")
+		if g.Protected && "Protected" != protected {
+			data := struct {
+				Error string
+			}{
+				"Sorry, this is a protected game.",
+			}
+
+			writeJSON(w, data, http.StatusForbidden)
 			return
 		}
 

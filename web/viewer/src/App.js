@@ -57,8 +57,11 @@ function App() {
 
   const startRound = () => {
     musicRef.current.pause();
+    var headers = new Headers();
+    headers.append("Protected", "Protected");
     fetch(api + `${game}/start`, {
       method: 'GET',
+      headers: headers,
     })
     .then(response => response.json())
     .then(data => {
@@ -71,8 +74,11 @@ function App() {
   }
   const stopRound = () => {
     musicRef.current.pause();
+    var headers = new Headers();
+    headers.append("Protected", "Protected");
     fetch(api + `${game}/stop`, {
       method: 'GET',
+      headers: headers,
     })
     .then(response => response.json())
     .then(data => {
@@ -84,8 +90,11 @@ function App() {
   }
   const resetRound = () => {
     musicRef.current.pause();
+    var headers = new Headers();
+    headers.append("Protected", "Protected");
     fetch(api + `${game}/reset`, {
       method: 'GET',
+      headers: headers,
     })
     .then(response => response.json())
     .then(data => {
@@ -98,7 +107,13 @@ function App() {
   const startGame = () => {
     fetch(api + 'create', {
       method: 'POST',
-      body: JSON.stringify({size: size, distribution: -0.3, timelimit: roundTime, key:'SjqjcN81Shq77nqwLL'})
+      body: JSON.stringify({
+        size: size,
+        distribution: -0.3,
+        timelimit: roundTime,
+        key:'SjqjcN81Shq77nqwLL',
+        protected: true,
+      })
     })
     .then(response => response.json())
     .then(data => {
@@ -110,8 +125,11 @@ function App() {
     });
   }
   const updateGameState = () => {
+    var headers = new Headers();
+    headers.append("Protected", "Protected");
     fetch(api + `${game}/info`, {
       method: 'GET',
+      headers: headers,
     })
     .then(response => response.json())
     .then(data => {
