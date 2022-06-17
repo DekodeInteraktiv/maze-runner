@@ -19,6 +19,15 @@ func (s *Server) playerCreate() http.HandlerFunc {
 		Styles game.Styles `json:"styles"`
 	}
 
+	type PlayerRegisterResponse struct {
+		Name   string         `json:"name"`
+		ID     int            `json:"id"`
+		Styles game.Styles    `json:"styles"`
+		Pos    *game.Point    `json:"pos"`
+		Team   game.ClaimType `json:"team"`
+		Token  string         `json:"token"`
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		gamePass := chi.URLParam(r, "password")
 
@@ -87,7 +96,16 @@ func (s *Server) playerCreate() http.HandlerFunc {
 		// Register the player in the game.
 		p := g.RegisterPlayer(payload.Name, payload.Styles)
 
-		writeJSON(w, p, 200)
+		resp := &PlayerRegisterResponse{
+			Name:   p.Name,
+			ID:     p.ID,
+			Pos:    p.Pos,
+			Team:   p.Team,
+			Styles: p.Styles,
+			Token:  p.Token,
+		}
+
+		writeJSON(w, resp, 200)
 	}
 }
 

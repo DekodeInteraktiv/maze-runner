@@ -10,10 +10,10 @@ type Player struct {
 	ID        int       `json:"id"`
 	Styles    Styles    `json:"styles"`
 	Pos       *Point    `json:"pos"`
-	Token     string    `json:"token"`
+	Token     string    `json:"-"`
 	Team      ClaimType `json:"team"`
-	Abilities Abilities `json:"abilities"`
-	Stunned   bool      `json:"stunned"`
+	Abilities Abilities `json:"-"`
+	Stunned   bool      `json:"-"`
 	NextMove  string    `json:"-"`
 	sync.RWMutex
 }

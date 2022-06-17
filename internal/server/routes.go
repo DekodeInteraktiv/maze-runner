@@ -79,13 +79,16 @@ func (s *Server) routes() {
 	})
 
 	// Add API v1 routes
-	s.Router.Mount("/api/v1", s.apiRoutes())
+	s.Router.Mount("/api/v1", s.apiV1Routes())
+
+	// Add API v2 routes
+	s.Router.Mount("/api/v2", s.apiV2Routes())
 
 	// Handle NotFound
 	//s.Router.NotFound(s.notFound())
 }
 
-func (s *Server) apiRoutes() chi.Router {
+func (s *Server) apiV1Routes() chi.Router {
 	r := chi.NewRouter()
 
 	r.Route("/game", func(r chi.Router) {
@@ -115,6 +118,20 @@ func (s *Server) apiRoutes() chi.Router {
 				r.Post("/ability/shoot", s.playerAbilityShoot())
 			})
 		})
+	})
+
+	return r
+}
+
+func (s *Server) apiV2Routes() chi.Router {
+	r := chi.NewRouter()
+
+	r.Route("/game", func(r chi.Router) {
+
+		r.Route("/{gameID}", func(r chi.Router) {
+
+		})
+
 	})
 
 	return r
