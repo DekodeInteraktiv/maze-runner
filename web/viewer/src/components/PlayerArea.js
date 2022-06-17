@@ -19,6 +19,10 @@ const PlayerArea = ({id, players, password, claims}) => {
     });
   });
 
+  if(player.name.charAt(0) === '%') {
+    score = score+2;
+  }
+
   return(
     <div key={`player-${id}`} className={`player-area player-area-${id}`}>
       <SoundBoard.Select />
