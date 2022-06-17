@@ -163,7 +163,7 @@ function App() {
   return (
     <div className="App">
       <Music game={game} active={active} musicRef={musicRef} />
-      <style>{`body{--map-X: ${size};--map-Y: ${size};}`}</style>
+      <style>{`body{--map-X: ${maze.length};--map-Y: ${maze.length};}`}</style>
       <div className="app-head">
         <PlayerArea id="3" claims={gameState.claims} players={gameState.players} password={gameState.password} />
         <div className="branding">
