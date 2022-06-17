@@ -17,6 +17,7 @@ func (s *Server) gameCreate() http.HandlerFunc {
 		Size         int     `json:"size"`
 		Distribution float64 `json:"distribution"`
 		TimeLimit    uint    `json:"timelimit"`
+		Key          string  `json:"key"`
 	}
 
 	type CreateGameResponse struct {
@@ -60,6 +61,16 @@ func (s *Server) gameCreate() http.HandlerFunc {
 
 		if payload.TimeLimit == 0 || payload.TimeLimit < 15 || payload.TimeLimit > 900 {
 			payload.TimeLimit = 60
+		}
+
+		if payload.Key != "SjqjcN81Shq77nqwLL" {
+			data := struct {
+				Error string
+			}{
+				"Invalid API key provided in the `key` parameter.",
+			}
+			writeJSON(w, data, http.StatusBadRequest)
+			return
 		}
 
 		g := s.CreateGame(payload.Size, payload.Distribution, payload.TimeLimit)
