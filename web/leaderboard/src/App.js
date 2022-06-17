@@ -6,7 +6,7 @@ function App() {
     const [showPassword, setShowPassword] = useState(false);
     const getTitle = () => {
       if (showPassword) {
-        return "2:JsNh!7";
+        return "2:0qC";
       } else {
         return 'LEADERBOARD';
       }
