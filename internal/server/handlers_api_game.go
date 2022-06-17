@@ -67,7 +67,7 @@ func (s *Server) gameCreate() http.HandlerFunc {
 			data := struct {
 				Error string
 			}{
-				"Invalid API key provided in the `key` parameter.",
+				"Invalid API key provided in the `key` POST body field.",
 			}
 			writeJSON(w, data, http.StatusBadRequest)
 			return
