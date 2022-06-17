@@ -632,6 +632,7 @@ func (s *Server) playerStatus() http.HandlerFunc {
 		Maze         [][]game.MazeTileType `json:"maze"`
 		Claims       [][]game.ClaimType    `json:"claims"`
 		Objects      []*game.Object        `json:"objects"`
+		Players      []*game.Player        `json:"players"`
 		sync.RWMutex `json:"-"`
 	}
 
@@ -720,6 +721,7 @@ func (s *Server) playerStatus() http.HandlerFunc {
 			Maze:    maze,
 			Claims:  claims,
 			Objects: g.Objects,
+			Players: g.Players,
 		}
 
 		writeJSON(w, resp, 200)
