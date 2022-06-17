@@ -145,11 +145,11 @@ func (s *Server) gameStatus() http.HandlerFunc {
 
 		// Protect Games if needed.
 		protected := r.Header.Get("Protected")
-		if g.Protected && "Protected" != protected {
+		if "Protected" != protected {
 			data := struct {
 				Error string
 			}{
-				"Sorry, this is a protected game.",
+				"Sorry, this is a protected endpoint.",
 			}
 
 			writeJSON(w, data, http.StatusForbidden)
