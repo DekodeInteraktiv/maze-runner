@@ -18,12 +18,12 @@ function App() {
     fetch(api + id + '/player/register/' + pw, {
       method: 'POST',
       body: JSON.stringify({name: name, color: '#000',styles:{
-  head: 'background: red;',
-  body: 'background: blue; width: 30%;',
-  feet: 'width: 30%;',
-  foot: 'background: orange;',
-  arm:  'background: red;'
-}})
+        head: 'background: red;',
+        body: 'background: blue; width: 30%;',
+        feet: 'width: 30%;',
+        foot: 'background: orange;',
+        arm:  'background: red;'
+      }})
     })
     .then(response => response.json())
     .then(data => {

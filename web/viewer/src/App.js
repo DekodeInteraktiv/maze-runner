@@ -170,7 +170,7 @@ function App() {
         <img src={logo} alt="" />
         <div style={{textAlign:'center'}}>Game {gameState.id}</div>
         </div>
-        <PlayerArea id="4" claims={gameState.claims} players={gameState.players} password={gameState.password} />
+        <PlayerArea id="2" claims={gameState.claims} players={gameState.players} password={gameState.password} />
       </div>
       <Log log={gameState.log} />
       <Maze maze={maze} log={gameState.log} claims={gameState.claims} objects={gameState.objects} countDown={countDown} players={gameState.players}/>
@@ -182,7 +182,7 @@ function App() {
           {active && <button onClick={resetRound}>Reset round</button>}
           <Timer timer={gameState.timer} status={gameState.status} roundTime={roundTime} />
         </div>
-        <PlayerArea id="2" claims={gameState.claims} players={gameState.players} password={gameState.password} />
+        <PlayerArea id="4" claims={gameState.claims} players={gameState.players} password={gameState.password} />
       </div>
     </div>
   );
