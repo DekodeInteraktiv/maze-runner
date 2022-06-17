@@ -38,8 +38,8 @@ func New(l *log.Logger, c *config.Config) *Server {
 	return s
 }
 
-func (s *Server) CreateGame(size int, distribution float64, timelimit uint) *game.Game {
-	g := game.New(size, distribution, timelimit)
+func (s *Server) CreateGame(size int, distribution float64, timelimit uint, protected bool) *game.Game {
+	g := game.New(size, distribution, timelimit, protected)
 
 	s.Lock()
 	defer s.Unlock()

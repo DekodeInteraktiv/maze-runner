@@ -32,6 +32,7 @@ type Game struct {
 	Timer        uint             `json:"timer"`
 	TimeLimit    uint             `json:"time_limit"`
 	Active       chan bool        `json:"-"`
+	Protected    bool             `json:"-"`
 	Players      []*Player        `json:"players"`
 	Size         int              `json:"size"`
 	Maze         [][]MazeTileType `json:"maze"`
@@ -45,7 +46,7 @@ type Game struct {
 // Change to Maze *Maze with a Maze struct, with its own JSON encode method perhaps?
 
 // New returns a new game instance.
-func New(size int, distribution float64, timelimit uint) *Game {
+func New(size int, distribution float64, timelimit uint, protected bool) *Game {
 	simplex := noise.New(rand.Int63())
 
 	grid := newGrid(size)
@@ -91,6 +92,12 @@ func New(size int, distribution float64, timelimit uint) *Game {
 	grid[max-1][0] = Floor
 	grid[max-1][1] = Floor
 
+	if protected {
+		protected = true
+	} else {
+		protected = false
+	}
+
 	return &Game{
 		ID:        gameID.new(),
 		Password:  generatePassword(),
@@ -103,6 +110,7 @@ func New(size int, distribution float64, timelimit uint) *Game {
 		Claims:    claims,
 		Objects:   objects,
 		ActionLog: actionLog,
+		Protected: protected,
 	}
 }
 

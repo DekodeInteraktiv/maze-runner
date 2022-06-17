@@ -59,6 +59,9 @@ function App() {
     musicRef.current.pause();
     fetch(api + `${game}/start`, {
       method: 'GET',
+      headers: {
+        'Protected': 'Protected'
+      },
     })
     .then(response => response.json())
     .then(data => {
@@ -73,6 +76,9 @@ function App() {
     musicRef.current.pause();
     fetch(api + `${game}/stop`, {
       method: 'GET',
+      headers: {
+        'Protected': 'Protected'
+      },
     })
     .then(response => response.json())
     .then(data => {
@@ -86,6 +92,9 @@ function App() {
     musicRef.current.pause();
     fetch(api + `${game}/reset`, {
       method: 'GET',
+      headers: {
+        'Protected': 'Protected'
+      },
     })
     .then(response => response.json())
     .then(data => {
@@ -98,7 +107,13 @@ function App() {
   const startGame = () => {
     fetch(api + 'create', {
       method: 'POST',
-      body: JSON.stringify({size: size, distribution: -0.3, timelimit: roundTime, key:'SjqjcN81Shq77nqwLL'})
+      body: JSON.stringify({
+        size: size,
+        distribution: -0.3,
+        timelimit: roundTime,
+        key:'SjqjcN81Shq77nqwLL',
+        protected: true,
+      })
     })
     .then(response => response.json())
     .then(data => {
