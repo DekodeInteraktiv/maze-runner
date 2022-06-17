@@ -106,6 +106,15 @@ func (s *Server) gameStatus() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		denied := struct {
+			Error string
+		}{
+			"Naughty naughty!",
+		}
+
+		writeJSON(w, denied, http.StatusForbidden)
+		return
+
 		idStr := chi.URLParam(r, "gameID")
 
 		id, err := strconv.Atoi(idStr)
