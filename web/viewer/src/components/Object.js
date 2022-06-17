@@ -34,7 +34,11 @@ const Object = ({object, players}) => {
           return null;
       }
     case 'player':
-    const styles = players[object.id].styles;
+    let styles = {};
+    if(players) {
+      styles = players[object.id].styles;
+    }
+
       return (
         <div className={`player player-${object.id}`}>
           <div style={{cssText:styles.head}} className="player-head"></div>
