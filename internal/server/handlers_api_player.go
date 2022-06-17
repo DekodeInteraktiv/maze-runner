@@ -631,6 +631,7 @@ func (s *Server) playerStatus() http.HandlerFunc {
 		Team         game.ClaimType        `json:"team"`
 		Maze         [][]game.MazeTileType `json:"maze"`
 		Claims       [][]game.ClaimType    `json:"claims"`
+		Objects      []*game.Object        `json:"objects"`
 		sync.RWMutex `json:"-"`
 	}
 
@@ -688,8 +689,8 @@ func (s *Server) playerStatus() http.HandlerFunc {
 			maze[i] = make([]game.MazeTileType, size)
 		}
 
-		for x := (p.Pos.X - 3); x < (p.Pos.X + 3); x++ {
-			for y := (p.Pos.Y - 3); y < (p.Pos.Y + 3); y++ {
+		for x := (p.Pos.X - 4); x < (p.Pos.X + 4); x++ {
+			for y := (p.Pos.Y - 4); y < (p.Pos.Y + 4); y++ {
 				if x >= 0 && x < g.Size && y >= 0 && y < g.Size {
 					maze[x][y] = g.Maze[x][y]
 				}
@@ -702,8 +703,8 @@ func (s *Server) playerStatus() http.HandlerFunc {
 			claims[i] = make([]game.ClaimType, size)
 		}
 
-		for x := (p.Pos.X - 3); x < (p.Pos.X + 3); x++ {
-			for y := (p.Pos.Y - 3); y < (p.Pos.Y + 3); y++ {
+		for x := (p.Pos.X - 4); x < (p.Pos.X + 4); x++ {
+			for y := (p.Pos.Y - 4); y < (p.Pos.Y + 4); y++ {
 				if x >= 0 && x < g.Size && y >= 0 && y < g.Size {
 					claims[x][y] = g.Claims[x][y]
 				}
@@ -711,13 +712,14 @@ func (s *Server) playerStatus() http.HandlerFunc {
 		}
 
 		resp := &PlayerStatusResponse{
-			Name:   p.Name,
-			ID:     p.ID,
-			Pos:    p.Pos,
-			Team:   p.Team,
-			Styles: p.Styles,
-			Maze:   maze,
-			Claims: claims,
+			Name:    p.Name,
+			ID:      p.ID,
+			Pos:     p.Pos,
+			Team:    p.Team,
+			Styles:  p.Styles,
+			Maze:    maze,
+			Claims:  claims,
+			Objects: g.Objects,
 		}
 
 		writeJSON(w, resp, 200)
