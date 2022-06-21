@@ -18,9 +18,7 @@ func (s *Server) routes() {
 	s.Router.Get("/favicon.ico", s.webFavicon())
 
 	// Viewer App
-	viewerCreds := map[string]string{"viewer": "d3kode"}
 	s.Router.Group(func(r chi.Router) {
-		r.Use(middleware.BasicAuth("viewer", viewerCreds))
 		r.Get("/viewer", s.viewerIndex())
 		r.Get("/viewer/", s.viewerIndex())
 		r.Get("/viewer/{id}", s.viewerIndex())
@@ -125,6 +123,11 @@ func (s *Server) apiV2Routes() chi.Router {
 	r.Route("/game", func(r chi.Router) {
 
 		r.Route("/{gameID}", func(r chi.Router) {
+
+			r.Route("/player", func(r chi.Router) {
+				r.Get("/ability/bomb", s.playerAbilityBomb())
+				r.Post("/ability/shoot", s.playerAbilityShoot())
+			})
 
 		})
 
