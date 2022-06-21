@@ -80,7 +80,10 @@ func (s *Server) Setup() {
 	s.Router.Use(s.VerifyToken())
 
 	s.Router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://maze.peterbooker.com"},
+		AllowOriginFunc: func(r *http.Request, origin string) bool {
+			return true
+		},
+		//AllowedOrigins:   []string{"https://maze.peterbooker.com"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
