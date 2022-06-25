@@ -11,8 +11,8 @@ It is automatically deployed, when `main` is tagged, to `https://maze.peterbooke
 
 ## People
 
- * [Alex Kylén](alex@dekode.no)
- * [Peter Booker](peter@dekode.no)
+ * [Alex Kylén](mailto:alex@dekode.no)
+ * [Peter Booker](mailto:peter@dekode.no)
 
 ## Useful Links
 
