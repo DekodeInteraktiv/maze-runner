@@ -16,8 +16,8 @@ It is automatically deployed, when `main` is tagged, to `https://maze.peterbooke
 
 ## Useful Links
 
-API: `https://maze.peterbooker.com/api/v1/`
-Viewer: `https://maze.peterbooker.com/viewer/`
-Register: `https://maze.peterbooker.com/register/`
-Leaderboard: `https://maze.peterbooker.com/leaderboard/`
-Controller: `https://maze.peterbooker.com/controller/`
+ * API: `https://maze.peterbooker.com/api/v1/`
+ * Viewer: `https://maze.peterbooker.com/viewer/`
+ * Register: `https://maze.peterbooker.com/register/`
+ * Leaderboard: `https://maze.peterbooker.com/leaderboard/`
+ * Controller: `https://maze.peterbooker.com/controller/`
