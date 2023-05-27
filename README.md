@@ -1,1 +1,1 @@
-# maze-game-server
+# Maze Runner
