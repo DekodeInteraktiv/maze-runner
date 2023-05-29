@@ -51,7 +51,7 @@ jobs:
           username: ${{ secrets.DEPLOY_USERNAME }}
           key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
           port: 22
-          script: systemctl stop maze
+          script: sudo systemctl stop maze
 
       - name: Push to server
         working-directory: ./
@@ -77,4 +77,4 @@ jobs:
           username: ${{ secrets.DEPLOY_USERNAME }}
           key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
           port: 22
-          script: systemctl start maze
+          script: sudo systemctl start maze
