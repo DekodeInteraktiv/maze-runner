@@ -44,14 +44,14 @@ jobs:
       - name: Build Go Binary
         run: go build -ldflags="-s -w -X main.version=$(git describe --tags --abbrev=0) -X main.commit=$(git rev-parse --verify HEAD) -X main.date=$(date +'%Y/%m/%d')" -o ./build ./...
 
-      # - name: Stop Maze Server
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ secrets.DEPLOY_HOSTNAME }}
-      #     username: ${{ secrets.DEPLOY_USERNAME }}
-      #     key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
-      #     port: 22
-      #     script: systemctl stop maze
+      - name: Stop Maze Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOSTNAME }}
+          username: ${{ secrets.DEPLOY_USERNAME }}
+          key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
+          port: 22
+          script: systemctl stop maze
 
       - name: Push to server
         working-directory: ./
@@ -70,11 +70,11 @@ jobs:
           scp ./build/maze-game-server ${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_HOSTNAME }}:${{ secrets.DEPLOY_PATH }}
           echo "::endgroup::"
 
-      # - name: Start Maze Server
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ secrets.DEPLOY_HOSTNAME }}
-      #     username: ${{ secrets.DEPLOY_USERNAME }}
-      #     key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
-      #     port: 22
-      #     script: systemctl start maze
+      - name: Start Maze Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOSTNAME }}
+          username: ${{ secrets.DEPLOY_USERNAME }}
+          key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
+          port: 22
+          script: systemctl start maze
