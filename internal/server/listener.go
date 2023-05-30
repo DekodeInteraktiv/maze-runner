@@ -20,5 +20,5 @@ func (s *Server) startHTTP() {
 }
 
 func (s *Server) startHTTPS() {
-	go func() { s.Logger.Fatal(certmagic.HTTPS([]string{"maze.peterbooker.com"}, s.Router)) }()
+	go func() { s.Logger.Fatal(certmagic.HTTPS([]string{"mazegame.dekodes.no"}, s.Router)) }()
 }

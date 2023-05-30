@@ -1,4 +1,4 @@
-module github.com/PeterBooker/maze-game-server
+module github.com/DekodeInteraktiv/maze-runner
 
 go 1.18
 

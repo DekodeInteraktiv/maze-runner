@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-const api = 'https://maze.peterbooker.com/api/v1/game/';
+const api = 'https://mazegame.dekodes.no/api/v1/game/';
 
 function App() {
   const [id, setId] = useState("");

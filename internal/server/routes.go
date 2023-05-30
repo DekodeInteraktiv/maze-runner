@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/PeterBooker/maze-game-server/internal/assets"
+	"github.com/DekodeInteraktiv/maze-runner/internal/assets"
 	"github.com/didip/tollbooth/v6"
 	"github.com/didip/tollbooth/v6/limiter"
 	"github.com/go-chi/chi"

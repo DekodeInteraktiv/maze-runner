@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/PeterBooker/maze-game-server/internal/assets"
+	"github.com/DekodeInteraktiv/maze-runner/internal/assets"
 )
 
 // App ...

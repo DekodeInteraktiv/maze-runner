@@ -8,9 +8,9 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/PeterBooker/maze-game-server/internal/config"
-	"github.com/PeterBooker/maze-game-server/internal/log"
-	"github.com/PeterBooker/maze-game-server/internal/server"
+	"github.com/DekodeInteraktiv/maze-runner/internal/config"
+	"github.com/DekodeInteraktiv/maze-runner/internal/log"
+	"github.com/DekodeInteraktiv/maze-runner/internal/server"
 )
 
 var (

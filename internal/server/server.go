@@ -6,10 +6,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/PeterBooker/maze-game-server/internal/assets"
-	"github.com/PeterBooker/maze-game-server/internal/client"
-	"github.com/PeterBooker/maze-game-server/internal/config"
-	"github.com/PeterBooker/maze-game-server/internal/game"
+	"github.com/DekodeInteraktiv/maze-runner/internal/assets"
+	"github.com/DekodeInteraktiv/maze-runner/internal/client"
+	"github.com/DekodeInteraktiv/maze-runner/internal/config"
+	"github.com/DekodeInteraktiv/maze-runner/internal/game"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -83,7 +83,6 @@ func (s *Server) Setup() {
 		AllowOriginFunc: func(r *http.Request, origin string) bool {
 			return true
 		},
-		//AllowedOrigins:   []string{"https://maze.peterbooker.com"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},

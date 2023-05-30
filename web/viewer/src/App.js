@@ -13,7 +13,7 @@ import './App.css';
 import menuAudio from './audio/menu.wav';
 import gameAudio from './audio/game.wav';
 import SoundBoard from './components/SoundBoard';
-const api = 'https://maze.peterbooker.com/api/v1/game/';
+const api = 'https://mazegame.dekodes.no/api/v1/game/';
 const roundTime = 120;
 const size = 16;
 

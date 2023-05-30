@@ -3,7 +3,7 @@ package server
 import (
 	"net/http"
 
-	"github.com/PeterBooker/maze-game-server/internal/assets"
+	"github.com/DekodeInteraktiv/maze-runner/internal/assets"
 )
 
 func (s *Server) leaderboardIndex() http.HandlerFunc {

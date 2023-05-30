@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/PeterBooker/maze-game-server/internal/game"
+	"github.com/DekodeInteraktiv/maze-runner/internal/game"
 	"github.com/go-chi/chi"
 	"golang.org/x/exp/slices"
 )
